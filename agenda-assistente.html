@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Agenda — Bruno</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #060d18; --surface: #0d1a2d; --surface2: #112240;
+  --border: rgba(201,168,76,0.15); --border-dim: rgba(255,255,255,0.06);
+  --gold: #C9A84C; --gold-light: #E8C97A; --gold-dim: rgba(201,168,76,0.08);
+  --text: #e8eaf0; --muted: #6b7a99;
+  --green: #4CAF82; --green-dim: rgba(76,175,130,0.1);
+  --red: #e07070; --blue: #5b9cf6; --blue-dim: rgba(91,156,246,0.1);
+}
+body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; max-width: 480px; margin: 0 auto; padding: 0 0 100px; }
+
+/* HEADER */
+.header { padding: 20px 20px 14px; border-bottom: 1px solid var(--border-dim); position: sticky; top: 0; background: var(--bg); z-index: 10; }
+.header-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 2px; }
+.brand { font-family: 'Playfair Display', serif; font-size: 18px; color: var(--gold); }
+.date-label { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--muted); }
+.day-summary { font-size: 12px; color: var(--muted); margin-top: 4px; }
+.day-summary strong { color: var(--text); }
+
+/* AUTH BANNER */
+.auth-banner { margin: 16px 20px; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 16px; text-align: center; }
+.auth-banner p { font-size: 13px; color: var(--muted); margin-bottom: 12px; line-height: 1.5; }
+.auth-banner strong { color: var(--gold); }
+.google-btn { display: inline-flex; align-items: center; gap: 8px; background: white; color: #333; border: none; border-radius: 6px; padding: 10px 16px; font-size: 13px; font-weight: 500; cursor: pointer; transition: box-shadow 0.2s; }
+.google-btn:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.3); }
+.google-btn svg { width: 18px; height: 18px; }
+.user-info { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--muted); }
+.user-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--green); }
+.logout-btn { font-size: 11px; color: var(--muted); background: none; border: none; cursor: pointer; margin-left: auto; text-decoration: underline; }
+
+/* TABS */
+.tabs { display: flex; padding: 0 20px; border-bottom: 1px solid var(--border-dim); }
+.tab { flex: 1; padding: 12px 0; font-size: 12px; font-weight: 500; color: var(--muted); background: none; border: none; border-bottom: 2px solid transparent; cursor: pointer; transition: all 0.2s; text-align: center; }
+.tab.active { color: var(--gold); border-bottom-color: var(--gold); }
+
+/* VIEWS */
+.view { display: none; padding: 16px 20px; }
+.view.active { display: block; }
+
+/* SECTION LABEL */
+.slabel { font-size: 10px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); margin-bottom: 10px; margin-top: 20px; }
+.slabel:first-child { margin-top: 0; }
+
+/* EVENT CARD */
+.event-card { background: var(--surface); border: 1px solid var(--border-dim); border-radius: 8px; padding: 14px; margin-bottom: 8px; display: flex; gap: 12px; align-items: flex-start; transition: border-color 0.2s; }
+.event-card:hover { border-color: var(--border); }
+.event-card.done { opacity: 0.4; }
+.event-card.done .event-title { text-decoration: line-through; }
+.event-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; margin-top: 5px; }
+.dot-reuniao { background: var(--blue); }
+.dot-tarefa   { background: var(--gold); }
+.dot-lembrete { background: var(--green); }
+.dot-followup { background: #b07ff0; }
+.event-body { flex: 1; min-width: 0; }
+.event-title { font-size: 13px; font-weight: 500; color: var(--text); margin-bottom: 3px; line-height: 1.4; }
+.event-meta  { font-size: 11px; color: var(--muted); display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin-bottom: 6px; }
+.event-time  { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--gold); }
+.event-tag   { font-size: 10px; padding: 2px 7px; border-radius: 3px; font-weight: 500; }
+.tag-reuniao { background: var(--blue-dim); color: var(--blue); }
+.tag-tarefa  { background: var(--gold-dim); color: var(--gold); }
+.tag-lembrete{ background: var(--green-dim); color: var(--green); }
+.tag-followup{ background: rgba(176,127,240,0.1); color: #b07ff0; }
+.gcal-badge  { font-size: 9px; color: var(--green); opacity: 0.7; }
+.event-actions { display: flex; gap: 6px; }
+.event-btn { font-size: 10px; padding: 3px 8px; border-radius: 3px; border: 1px solid var(--border-dim); background: none; color: var(--muted); cursor: pointer; font-family: 'DM Sans', sans-serif; transition: all 0.2s; }
+.event-btn:hover { border-color: var(--border); color: var(--text); }
+.event-btn.del-btn:hover { border-color: var(--red); color: var(--red); }
+
+/* EMPTY */
+.empty { text-align: center; padding: 40px 20px; color: var(--muted); font-size: 13px; line-height: 1.8; }
+.empty-icon { font-size: 28px; margin-bottom: 10px; }
+
+/* CHAT */
+.chat-wrap { display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px; min-height: 180px; }
+.msg { max-width: 88%; padding: 10px 14px; border-radius: 12px; font-size: 13px; line-height: 1.5; }
+.msg.user { background: var(--gold-dim); border: 1px solid var(--border); color: var(--text); align-self: flex-end; border-radius: 12px 12px 2px 12px; }
+.msg.ai { background: var(--surface); border: 1px solid var(--border-dim); color: var(--text); align-self: flex-start; border-radius: 12px 12px 12px 2px; }
+.msg.ai .mlabel { font-size: 10px; color: var(--gold); font-weight: 600; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 4px; }
+.suggestions { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 10px; }
+.sug-btn { font-size: 11px; padding: 5px 10px; background: var(--surface); border: 1px solid var(--border-dim); border-radius: 14px; color: var(--muted); cursor: pointer; font-family: 'DM Sans', sans-serif; transition: all 0.2s; }
+.sug-btn:hover { border-color: var(--border); color: var(--text); }
+
+/* INPUT BAR */
+.input-bar { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 480px; background: var(--bg); border-top: 1px solid var(--border-dim); padding: 10px 14px; display: flex; gap: 8px; align-items: flex-end; }
+#msgInput { flex: 1; background: var(--surface); border: 1px solid var(--border-dim); border-radius: 20px; padding: 10px 16px; font-family: 'DM Sans', sans-serif; font-size: 14px; color: var(--text); outline: none; resize: none; max-height: 100px; transition: border-color 0.2s; line-height: 1.4; }
+#msgInput:focus { border-color: var(--border); }
+#msgInput::placeholder { color: var(--muted); }
+.send-btn { width: 40px; height: 40px; border-radius: 50%; background: var(--gold); border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; transition: background 0.2s; }
+.send-btn:hover { background: var(--gold-light); }
+.send-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+.badge { display: inline-flex; align-items: center; justify-content: center; width: 16px; height: 16px; border-radius: 50%; background: var(--gold); color: #060d18; font-size: 9px; font-weight: 700; margin-left: 4px; }
+.loading-dots span { animation: blink 1.2s infinite; font-size: 18px; color: var(--gold); }
+.loading-dots span:nth-child(2) { animation-delay: 0.2s; }
+.loading-dots span:nth-child(3) { animation-delay: 0.4s; }
+@keyframes blink { 0%,80%,100%{opacity:0} 40%{opacity:1} }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-top">
+    <div class="brand">Agenda</div>
+    <div class="date-label" id="headerDate">—</div>
+  </div>
+  <div class="day-summary" id="daySummary">—</div>
+</div>
+
+<!-- AUTH -->
+<div id="authSection" style="display:none">
+  <div class="auth-banner">
+    <p>Conecte sua conta Google para salvar compromissos direto no <strong>Google Calendar</strong> e receber notificações no celular.</p>
+    <button class="google-btn" onclick="signIn()">
+      <svg viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+      Entrar com Google
+    </button>
+  </div>
+</div>
+
+<div id="userSection" style="display:none">
+  <div style="padding: 10px 20px;">
+    <div class="user-info">
+      <div class="user-dot"></div>
+      <span id="userName">—</span>
+      <span id="calStatus" style="font-size:10px; color: var(--green);">● Google Calendar</span>
+      <button class="logout-btn" onclick="signOut()">sair</button>
+    </div>
+  </div>
+</div>
+
+<div class="tabs">
+  <button class="tab active" onclick="switchTab('hoje', this)">Hoje <span class="badge" id="badgeHoje">0</span></button>
+  <button class="tab" onclick="switchTab('semana', this)">Semana</button>
+  <button class="tab" onclick="switchTab('assistente', this)">Assistente</button>
+</div>
+
+<div class="view active" id="view-hoje"><div id="listaHoje"></div></div>
+<div class="view" id="view-semana"><div id="listaSemana"></div></div>
+<div class="view" id="view-assistente">
+  <div class="suggestions">
+    <button class="sug-btn" onclick="useSug('O que tenho hoje?')">O que tenho hoje?</button>
+    <button class="sug-btn" onclick="useSug('Reunião amanhã às 10h com João sobre consórcio')">+ Reunião</button>
+    <button class="sug-btn" onclick="useSug('Me lembra de ligar pro parceiro hoje às 17h')">+ Lembrete</button>
+    <button class="sug-btn" onclick="useSug('Follow-up com cliente sexta às 9h')">+ Follow-up</button>
+  </div>
+  <div class="chat-wrap" id="chatWrap">
+    <div class="msg ai">
+      <div class="mlabel">Assistente</div>
+      Olá Bruno. Me diga o que precisa em linguagem natural:<br><br>
+      "Reunião com Âncora quinta às 14h"<br>
+      "Ligar pro João hoje às 17h"<br>
+      "O que tenho amanhã?"
+    </div>
+  </div>
+</div>
+
+<div class="input-bar">
+  <textarea id="msgInput" placeholder="Digite um compromisso..." rows="1" onkeydown="handleKey(event)" oninput="autoResize(this)"></textarea>
+  <button class="send-btn" id="sendBtn" onclick="sendMessage()">↑</button>
+</div>
+
+<script>
+const CLIENT_ID = '863893997761-95era6h3airlceot1a94j4fp14ksnp1j.apps.googleusercontent.com';
+const SCOPES = 'https://www.googleapis.com/auth/calendar.events';
+const STORAGE_KEY = 'agenda_bruno_v2';
+
+let tokenClient, accessToken = null, isSignedIn = false;
+let agenda = loadAgenda();
+
+// ─── STORAGE ──────────────────────────────────────────────────────────────
+function loadAgenda() {
+  try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'); } catch { return []; }
+}
+function saveAgenda() { localStorage.setItem(STORAGE_KEY, JSON.stringify(agenda)); }
+
+// ─── GOOGLE AUTH ──────────────────────────────────────────────────────────
+window.onload = function() {
+  tokenClient = google.accounts.oauth2.initTokenClient({
+    client_id: CLIENT_ID,
+    scope: SCOPES,
+    callback: (resp) => {
+      if (resp.error) { console.error(resp); return; }
+      accessToken = resp.access_token;
+      isSignedIn = true;
+      fetchUserInfo();
+      showUserSection();
+    }
+  });
+
+  const saved = localStorage.getItem('gcal_token');
+  if (saved) {
+    accessToken = saved;
+    isSignedIn = true;
+    fetchUserInfo();
+    showUserSection();
+  } else {
+    document.getElementById('authSection').style.display = 'block';
+  }
+
+  renderHeader();
+  renderAll();
+};
+
+function signIn() {
+  tokenClient.requestAccessToken({ prompt: 'consent' });
+}
+
+function signOut() {
+  google.accounts.oauth2.revoke(accessToken, () => {});
+  accessToken = null;
+  isSignedIn = false;
+  localStorage.removeItem('gcal_token');
+  document.getElementById('userSection').style.display = 'none';
+  document.getElementById('authSection').style.display = 'block';
+}
+
+function showUserSection() {
+  document.getElementById('authSection').style.display = 'none';
+  document.getElementById('userSection').style.display = 'block';
+  if (accessToken) localStorage.setItem('gcal_token', accessToken);
+}
+
+async function fetchUserInfo() {
+  try {
+    const r = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
+      headers: { Authorization: `Bearer ${accessToken}` }
+    });
+    const d = await r.json();
+    document.getElementById('userName').textContent = d.name || d.email;
+  } catch {}
+}
+
+// ─── GOOGLE CALENDAR ──────────────────────────────────────────────────────
+async function createGCalEvent(item) {
+  if (!accessToken) return null;
+  try {
+    const start = buildDateTime(item.data, item.hora);
+    const end   = buildDateTime(item.data, item.hora, 60);
+    const body = {
+      summary: item.titulo,
+      description: [
+        item.tipo ? `Tipo: ${tipoLabel(item.tipo)}` : '',
+        item.contato ? `Contato: ${item.contato}` : '',
+        item.notas || ''
+      ].filter(Boolean).join('\n'),
+      start,
+      end,
+      reminders: { useDefault: false, overrides: [{ method:'popup', minutes: 30 }] }
+    };
+    if (item.local) body.location = item.local;
+
+    const r = await fetch('https://www.googleapis.com/calendar/v3/calendars/primary/events', {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${accessToken}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    });
+    const d = await r.json();
+    return d.id || null;
+  } catch (e) { console.error('GCal error:', e); return null; }
+}
+
+async function deleteGCalEvent(gcalId) {
+  if (!accessToken || !gcalId) return;
+  try {
+    await fetch(`https://www.googleapis.com/calendar/v3/calendars/primary/events/${gcalId}`, {
+      method: 'DELETE',
+      headers: { Authorization: `Bearer ${accessToken}` }
+    });
+  } catch {}
+}
+
+function buildDateTime(dataStr, horaStr, addMinutes = 0) {
+  const d = new Date(dataStr);
+  if (horaStr && horaStr !== 'sem hora') {
+    const [h, m] = horaStr.split(':').map(Number);
+    d.setHours(h, m + addMinutes, 0, 0);
+    return { dateTime: d.toISOString(), timeZone: 'America/Sao_Paulo' };
+  }
+  d.setMinutes(d.getMinutes() + addMinutes);
+  return { date: dataStr };
+}
+
+// ─── UTILS ────────────────────────────────────────────────────────────────
+function hoje() { const d = new Date(); d.setHours(0,0,0,0); return d; }
+function isHoje(item) {
+  if (!item.data) return false;
+  const d = new Date(item.data); d.setHours(0,0,0,0);
+  return d.getTime() === hoje().getTime();
+}
+function isSemana(item) {
+  if (!item.data) return false;
+  const d = new Date(item.data); d.setHours(0,0,0,0);
+  const fim = new Date(hoje()); fim.setDate(fim.getDate()+7);
+  return d >= hoje() && d <= fim;
+}
+function fmtDateShort(d) { return new Date(d).toLocaleDateString('pt-BR',{weekday:'short',day:'numeric',month:'short'}); }
+function tipoLabel(t) { return {reuniao:'Reunião',tarefa:'Tarefa',lembrete:'Lembrete',followup:'Follow-up'}[t]||'Tarefa'; }
+function dotClass(t)  { return {reuniao:'dot-reuniao',tarefa:'dot-tarefa',lembrete:'dot-lembrete',followup:'dot-followup'}[t]||'dot-tarefa'; }
+function tagClass(t)  { return {reuniao:'tag-reuniao',tarefa:'tag-tarefa',lembrete:'tag-lembrete',followup:'tag-followup'}[t]||'tag-tarefa'; }
+const fmt = n => 'R$ '+n.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
+
+// ─── RENDER ───────────────────────────────────────────────────────────────
+function renderHeader() {
+  const d = new Date();
+  document.getElementById('headerDate').textContent =
+    d.toLocaleDateString('pt-BR',{weekday:'short',day:'numeric',month:'short'}).toUpperCase();
+  const itens = agenda.filter(i => isHoje(i) && !i.done);
+  const r = itens.filter(i=>i.tipo==='reuniao').length;
+  const t = itens.filter(i=>i.tipo!=='reuniao').length;
+  let s = 'Nada agendado para hoje.';
+  if (itens.length) {
+    const p = [];
+    if (r) p.push(`${r} reunião${r>1?'ões':''}`);
+    if (t) p.push(`${t} tarefa${t>1?'s':''}`);
+    s = `Hoje: <strong>${p.join(' · ')}</strong>`;
+  }
+  document.getElementById('daySummary').innerHTML = s;
+  document.getElementById('badgeHoje').textContent = itens.length;
+}
+
+function renderCard(item) {
+  const temHora = item.hora && item.hora !== 'sem hora';
+  return `<div class="event-card ${item.done?'done':''}" id="ev-${item.id}">
+    <div class="event-dot ${dotClass(item.tipo)}"></div>
+    <div class="event-body">
+      <div class="event-title">${item.titulo}</div>
+      <div class="event-meta">
+        ${temHora?`<span class="event-time">${item.hora}</span>`:''}
+        <span class="event-tag ${tagClass(item.tipo)}">${tipoLabel(item.tipo)}</span>
+        ${item.contato?`<span>👤 ${item.contato}</span>`:''}
+        ${item.gcalId?`<span class="gcal-badge">✓ Google Calendar</span>`:''}
+      </div>
+      <div class="event-actions">
+        <button class="event-btn del-btn" onclick="deleteItem('${item.id}')">Remover</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+function renderHoje() {
+  const lista = document.getElementById('listaHoje');
+  const itens = agenda.filter(i=>isHoje(i)).sort((a,b)=>{
+    if(!a.hora||a.hora==='sem hora') return 1;
+    if(!b.hora||b.hora==='sem hora') return -1;
+    return a.hora.localeCompare(b.hora);
+  });
+  if (!itens.length) { lista.innerHTML=`<div class="empty"><div class="empty-icon">📅</div>Nada para hoje.<br>Use o Assistente para adicionar.</div>`; return; }
+  lista.innerHTML = itens.map(renderCard).join('');
+}
+
+function renderSemana() {
+  const lista = document.getElementById('listaSemana');
+  const itens = agenda.filter(i=>isSemana(i)).sort((a,b)=>{
+    const da=new Date(a.data).getTime(), db=new Date(b.data).getTime();
+    if(da!==db) return da-db;
+    if(!a.hora||a.hora==='sem hora') return 1;
+    if(!b.hora||b.hora==='sem hora') return -1;
+    return a.hora.localeCompare(b.hora);
+  });
+  if (!itens.length) { lista.innerHTML=`<div class="empty"><div class="empty-icon">🗓️</div>Nada nos próximos 7 dias.</div>`; return; }
+  const grupos={};
+  itens.forEach(i=>{ const k=new Date(i.data).toDateString(); if(!grupos[k]) grupos[k]={label:fmtDateShort(i.data),items:[]}; grupos[k].items.push(i); });
+  let html='';
+  Object.values(grupos).forEach(g=>{ html+=`<div class="slabel">${g.label}</div>`; html+=g.items.map(renderCard).join(''); });
+  lista.innerHTML=html;
+}
+
+function renderAll() { renderHeader(); renderHoje(); renderSemana(); }
+
+// ─── ACTIONS ──────────────────────────────────────────────────────────────
+async function addItem(item) {
+  item.id = Date.now().toString();
+  item.done = false;
+  item.criadoEm = new Date().toISOString();
+  if (isSignedIn) {
+    const gcalId = await createGCalEvent(item);
+    if (gcalId) item.gcalId = gcalId;
+  }
+  agenda.push(item);
+  saveAgenda();
+  renderAll();
+  return item;
+}
+
+async function deleteItem(id) {
+  const item = agenda.find(i=>i.id===id);
+  if (item?.gcalId) await deleteGCalEvent(item.gcalId);
+  agenda = agenda.filter(i=>i.id!==id);
+  saveAgenda();
+  renderAll();
+}
+
+// ─── TABS ─────────────────────────────────────────────────────────────────
+function switchTab(tab, el) {
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('view-'+tab).classList.add('active');
+}
+
+// ─── CHAT ─────────────────────────────────────────────────────────────────
+function addMsg(role, text) {
+  const wrap = document.getElementById('chatWrap');
+  const div = document.createElement('div');
+  div.className = `msg ${role}`;
+  div.innerHTML = role==='ai' ? `<div class="mlabel">Assistente</div>${text}` : text;
+  wrap.appendChild(div);
+  wrap.scrollTop = wrap.scrollHeight;
+  return div;
+}
+function addTyping() {
+  const wrap=document.getElementById('chatWrap');
+  const div=document.createElement('div');
+  div.className='msg ai'; div.id='typing';
+  div.innerHTML='<div class="mlabel">Assistente</div><span class="loading-dots"><span>.</span><span>.</span><span>.</span></span>';
+  wrap.appendChild(div); wrap.scrollTop=wrap.scrollHeight;
+}
+function removeTyping() { const t=document.getElementById('typing'); if(t) t.remove(); }
+function useSug(text) { document.getElementById('msgInput').value=text; sendMessage(); }
+function handleKey(e) { if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMessage();} }
+function autoResize(el) { el.style.height='auto'; el.style.height=Math.min(el.scrollHeight,100)+'px'; }
+
+async function sendMessage() {
+  const input=document.getElementById('msgInput');
+  const text=input.value.trim();
+  if(!text) return;
+  input.value=''; input.style.height='auto';
+  document.getElementById('sendBtn').disabled=true;
+
+  if(!document.getElementById('view-assistente').classList.contains('active')) {
+    document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+    document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+    document.querySelectorAll('.tab')[2].classList.add('active');
+    document.getElementById('view-assistente').classList.add('active');
+  }
+
+  addMsg('user', text);
+  addTyping();
+
+  const agendaCtx = agenda.filter(i=>isSemana(i))
+    .map(i=>`- [${i.tipo}] ${i.titulo} | ${new Date(i.data).toLocaleDateString('pt-BR')} ${i.hora||''} | id:${i.id}`)
+    .join('\n') || 'Nenhum item nos próximos 7 dias.';
+
+  const hojeStr = new Date().toLocaleDateString('pt-BR',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+
+  const system = `Você é o assistente de agenda pessoal de Bruno Magalhães, corretor financeiro no Rio de Janeiro.
+Hoje é ${hojeStr}.
+Agenda atual: ${agendaCtx}
+
+Para ADICIONAR um evento, responda com JSON dentro de <action>:
+<action>{"action":"add","titulo":"...","tipo":"reuniao|tarefa|lembrete|followup","data":"YYYY-MM-DD","hora":"HH:MM ou sem hora","contato":"nome ou null","local":"local ou null","notas":"..."}</action>
+
+Para REMOVER: <action>{"action":"delete","id":"..."}</action>
+
+Para CONSULTAR: responda apenas em texto.
+
+Regras:
+- Interprete datas relativas (hoje, amanhã, segunda, sexta, semana que vem)
+- Seja direto e confirme o que foi adicionado com data e hora
+- Responda em português, sem markdown`;
+
+  try {
+    const r = await fetch('https://api.anthropic.com/v1/messages', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ model:'claude-sonnet-4-20250514', max_tokens:800, system, messages:[{role:'user',content:text}] })
+    });
+    const d = await r.json();
+    const fullText = d.content?.[0]?.text || 'Não consegui processar.';
+    const actionMatch = fullText.match(/<action>([\s\S]*?)<\/action>/);
+    const display = fullText.replace(/<action>[\s\S]*?<\/action>/g,'').trim();
+
+    removeTyping();
+
+    if (actionMatch) {
+      try {
+        const action = JSON.parse(actionMatch[1]);
+        if (action.action==='add') {
+          const item = await addItem({
+            titulo: action.titulo, tipo: action.tipo||'tarefa',
+            data: action.data, hora: action.hora||'sem hora',
+            contato: action.contato||null, local: action.local||null, notas: action.notas||null
+          });
+          const gcalMsg = item.gcalId ? ' ✓ Salvo no Google Calendar.' : (!isSignedIn?' (faça login para salvar no Google Calendar)':'');
+          addMsg('ai', (display||'Adicionado.') + gcalMsg);
+        } else if (action.action==='delete') {
+          await deleteItem(action.id);
+          addMsg('ai', display||'Removido.');
+        }
+      } catch(e) { addMsg('ai', display||'Feito.'); }
+    } else {
+      addMsg('ai', display);
+    }
+  } catch(err) {
+    removeTyping();
+    addMsg('ai','Erro de conexão. Tente novamente.');
+  }
+  document.getElementById('sendBtn').disabled=false;
+}
+</script>
+</body>
+</html>
