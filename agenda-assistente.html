@@ -9,7 +9,7 @@
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 :root {
-  --bg: #060d18; --surface: #0d1a2d;
+  --bg: #060d18; --surface: #0d1a2d; --surface2: #112240;
   --border: rgba(201,168,76,0.15); --border-dim: rgba(255,255,255,0.06);
   --gold: #C9A84C; --gold-light: #E8C97A; --gold-dim: rgba(201,168,76,0.08);
   --text: #e8eaf0; --muted: #6b7a99;
@@ -45,6 +45,7 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--t
 .slabel { font-size: 10px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; margin-top: 16px; }
 .slabel:first-child { margin-top: 0; }
 
+/* EVENT CARDS */
 .event-card { background: var(--surface); border: 1px solid var(--border-dim); border-radius: 8px; padding: 12px 14px; margin-bottom: 8px; display: flex; gap: 10px; transition: border-color 0.2s; }
 .event-card:hover { border-color: var(--border); }
 .event-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; margin-top: 5px; }
@@ -62,29 +63,55 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--t
 .gcal-ok { font-size: 10px; color: var(--green); opacity: 0.8; }
 .del-btn { font-size: 10px; padding: 2px 8px; border-radius: 3px; border: 1px solid var(--border-dim); background: none; color: var(--muted); cursor: pointer; font-family: 'DM Sans', sans-serif; }
 .del-btn:hover { border-color: var(--red); color: var(--red); }
-
 .empty { text-align: center; padding: 36px 20px; color: var(--muted); font-size: 13px; line-height: 1.8; }
 .empty-icon { font-size: 26px; margin-bottom: 8px; }
 
-/* ASSISTENTE */
-.chat-wrap { display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px; }
-.msg { max-width: 90%; padding: 10px 13px; border-radius: 10px; font-size: 13px; line-height: 1.5; }
-.msg.user { background: var(--gold-dim); border: 1px solid var(--border); align-self: flex-end; border-radius: 10px 10px 2px 10px; }
+/* ASSISTENTE / URA */
+.chat-wrap { display: flex; flex-direction: column; gap: 10px; padding-bottom: 8px; }
+
+.msg { max-width: 92%; padding: 11px 14px; border-radius: 10px; font-size: 13px; line-height: 1.6; }
 .msg.ai { background: var(--surface); border: 1px solid var(--border-dim); align-self: flex-start; border-radius: 10px 10px 10px 2px; }
-.msg.ai .mlabel { font-size: 10px; color: var(--gold); font-weight: 600; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 4px; }
-.msg.success { background: var(--green-dim); border-color: rgba(76,175,130,0.2); }
+.msg.ai .mlabel { font-size: 10px; color: var(--gold); font-weight: 600; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 5px; }
+.msg.user { background: var(--gold-dim); border: 1px solid var(--border); align-self: flex-end; border-radius: 10px 10px 2px 10px; font-size: 13px; }
+.msg.success { background: var(--green-dim); border-color: rgba(76,175,130,0.25); align-self: flex-start; border-radius: 10px 10px 10px 2px; }
 .msg.success .mlabel { color: var(--green); }
 
-.sugs { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 10px; }
-.sug { font-size: 11px; padding: 5px 10px; background: var(--surface); border: 1px solid var(--border-dim); border-radius: 14px; color: var(--muted); cursor: pointer; font-family: 'DM Sans', sans-serif; transition: all 0.2s; }
-.sug:hover { border-color: var(--border); color: var(--text); }
+/* BOTÕES DE OPÇÃO */
+.opt-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 10px; }
+.opt-grid.single { grid-template-columns: 1fr; }
+.opt-grid.three { grid-template-columns: 1fr 1fr 1fr; }
+.opt-btn {
+  padding: 11px 10px;
+  background: var(--surface2);
+  border: 1px solid var(--border-dim);
+  border-radius: 8px;
+  color: var(--text);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.2s;
+  line-height: 1.3;
+}
+.opt-btn:hover { border-color: var(--gold); color: var(--gold); background: var(--gold-dim); }
+.opt-btn .opt-num { display: block; font-family: 'DM Mono', monospace; font-size: 10px; color: var(--gold); margin-bottom: 3px; }
+.opt-btn.wide { grid-column: 1 / -1; }
 
-.input-bar { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 480px; background: var(--bg); border-top: 1px solid var(--border-dim); padding: 10px 14px; display: flex; gap: 8px; align-items: flex-end; }
-#msgInput { flex: 1; background: var(--surface); border: 1px solid var(--border-dim); border-radius: 20px; padding: 10px 16px; font-family: 'DM Sans', sans-serif; font-size: 14px; color: var(--text); outline: none; resize: none; max-height: 100px; transition: border-color 0.2s; line-height: 1.4; }
-#msgInput:focus { border-color: var(--border); }
-#msgInput::placeholder { color: var(--muted); }
-.send-btn { width: 40px; height: 40px; border-radius: 50%; background: var(--gold); border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; transition: background 0.2s; }
-.send-btn:hover { background: var(--gold-light); }
+/* INPUT LIVRE */
+.free-input-wrap { margin-top: 10px; display: flex; gap: 8px; }
+.free-input { flex: 1; background: var(--surface2); border: 1px solid var(--border-dim); border-radius: 8px; padding: 11px 14px; font-family: 'DM Sans', sans-serif; font-size: 14px; color: var(--text); outline: none; transition: border-color 0.2s; }
+.free-input:focus { border-color: var(--gold); }
+.free-input::placeholder { color: var(--muted); font-size: 13px; }
+.free-send { padding: 11px 16px; background: var(--gold); border: none; border-radius: 8px; color: #060d18; font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 600; cursor: pointer; transition: background 0.2s; white-space: nowrap; }
+.free-send:hover { background: var(--gold-light); }
+
+/* REINICIAR */
+.restart-btn { margin-top: 12px; padding: 9px 16px; background: transparent; border: 1px solid var(--border-dim); border-radius: 8px; color: var(--muted); font-family: 'DM Sans', sans-serif; font-size: 12px; cursor: pointer; transition: all 0.2s; width: 100%; text-align: center; }
+.restart-btn:hover { border-color: var(--border); color: var(--text); }
+
+.input-bar { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 480px; background: var(--bg); border-top: 1px solid var(--border-dim); padding: 10px 14px; display: flex; gap: 8px; align-items: center; }
+.input-bar-hint { flex: 1; font-size: 12px; color: var(--muted); text-align: center; }
 </style>
 </head>
 <body>
@@ -119,43 +146,29 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--t
 <div class="tabs">
   <button class="tab active" onclick="switchTab('hoje',this)">Hoje <span class="badge" id="badgeHoje">0</span></button>
   <button class="tab" onclick="switchTab('semana',this)">Semana</button>
-  <button class="tab" onclick="switchTab('assistente',this)">Assistente</button>
+  <button class="tab" onclick="switchTab('assistente',this)">+ Novo</button>
 </div>
 
 <div class="view active" id="view-hoje"><div id="listaHoje"></div></div>
 <div class="view" id="view-semana"><div id="listaSemana"></div></div>
 <div class="view" id="view-assistente">
-  <div class="sugs">
-    <button class="sug" onclick="useSug('o que tenho hoje?')">📅 Hoje</button>
-    <button class="sug" onclick="useSug('reunião amanhã às 10h com João')">+ Reunião</button>
-    <button class="sug" onclick="useSug('ligar pro parceiro hoje às 17h')">+ Lembrete</button>
-    <button class="sug" onclick="useSug('follow-up cliente sexta às 9h')">+ Follow-up</button>
-  </div>
-  <div class="chat-wrap" id="chatWrap">
-    <div class="msg ai">
-      <div class="mlabel">Assistente</div>
-      Olá Bruno. Exemplos do que posso fazer:<br><br>
-      "Reunião com Âncora quinta às 14h"<br>
-      "Ligar pro João hoje às 17h"<br>
-      "Follow-up cliente Maria sexta"<br>
-      "O que tenho hoje?"<br>
-      "O que tenho amanhã?"
-    </div>
-  </div>
+  <div class="chat-wrap" id="chatWrap"></div>
 </div>
 
 <div class="input-bar">
-  <textarea id="msgInput" placeholder="Digite um compromisso..." rows="1" onkeydown="handleKey(event)" oninput="autoResize(this)"></textarea>
-  <button class="send-btn" onclick="sendMessage()">↑</button>
+  <div class="input-bar-hint" id="inputHint">Selecione uma opção acima</div>
 </div>
 
 <script>
 const CLIENT_ID = '863893997761-95era6h3airlceot1a94j4fp14ksnp1j.apps.googleusercontent.com';
 const SCOPES = 'https://www.googleapis.com/auth/calendar.events https://www.googleapis.com/auth/userinfo.profile';
-const SK = 'agenda_bruno_v3';
+const SK = 'agenda_bruno_v4';
 
 let tokenClient, accessToken = null, isSignedIn = false;
 let agenda = load();
+
+// Estado do fluxo URA
+let fluxo = { etapa: 'menu', tipo: null, contato: null, data: null, hora: null, assunto: null };
 
 function load() { try { return JSON.parse(localStorage.getItem(SK)||'[]'); } catch { return []; } }
 function save() { localStorage.setItem(SK, JSON.stringify(agenda)); }
@@ -169,14 +182,14 @@ window.onload = () => {
       accessToken = r.access_token;
       isSignedIn = true;
       localStorage.setItem('gcal_tok', accessToken);
-      await fetchUser();
-      showUser();
+      await fetchUser(); showUser();
     }
   });
   const tok = localStorage.getItem('gcal_tok');
   if (tok) { accessToken = tok; isSignedIn = true; fetchUser(); showUser(); }
   else document.getElementById('authSection').style.display = 'block';
   renderHeader(); renderAll();
+  iniciarFluxo();
 };
 
 function signIn() { tokenClient.requestAccessToken({ prompt: 'consent' }); }
@@ -207,11 +220,10 @@ async function createGCal(item) {
     const end   = buildDT(item.data, item.hora, 60);
     const body = {
       summary: item.titulo,
-      description: [item.tipo ? tipoLabel(item.tipo) : '', item.contato || '', item.notas || ''].filter(Boolean).join(' · '),
+      description: [item.tipo ? tipoLabel(item.tipo) : '', item.contato||'', item.assunto||''].filter(Boolean).join(' · '),
       start, end,
       reminders: { useDefault: false, overrides: [{ method:'popup', minutes:30 }] }
     };
-    if (item.local) body.location = item.local;
     const r = await fetch('https://www.googleapis.com/calendar/v3/calendars/primary/events', {
       method: 'POST',
       headers: { Authorization: `Bearer ${accessToken}`, 'Content-Type': 'application/json' },
@@ -241,86 +253,10 @@ function buildDT(dataStr, horaStr, addMin=0) {
   return { date: dataStr };
 }
 
-// ─── PARSER DE LINGUAGEM NATURAL ──────────────────────────────────────────
-function parseTexto(texto) {
-  const t = texto.toLowerCase().trim();
-
-  // Consulta
-  if (/\b(o que|tenho|agenda|mostrar?|ver?|consultar?)\b/.test(t)) {
-    if (/\bamanhã\b/.test(t)) return { acao: 'consulta', quando: 'amanha' };
-    if (/\bsemana\b/.test(t)) return { acao: 'consulta', quando: 'semana' };
-    return { acao: 'consulta', quando: 'hoje' };
-  }
-
-  // Tipo
-  let tipo = 'tarefa';
-  if (/\breuni[aã]o\b|\breuni[ao]nes\b/.test(t)) tipo = 'reuniao';
-  else if (/\bfollow.?up\b|\bseguimento\b/.test(t)) tipo = 'followup';
-  else if (/\blembr[ae]\b|\blembrete\b|\bligar\b|\bligar\b|\bavisar\b|\benviar\b/.test(t)) tipo = 'lembrete';
-
-  // Data
-  const data = parseData(t);
-
-  // Hora
-  const hora = parseHora(t);
-
-  // Contato
-  let contato = null;
-  const contatoMatch = t.match(/\bcom\s+([A-Za-zÀ-ÿ]+(?:\s+[A-Za-zÀ-ÿ]+)?)\b/);
-  if (contatoMatch) contato = capitalize(contatoMatch[1]);
-
-  // Título — usa o texto original capitalizado, remove marcadores de tempo
-  let titulo = texto
-    .replace(/\b(hoje|amanhã|segunda|terça|quarta|quinta|sexta|sábado|domingo)\b/gi, '')
-    .replace(/\b(às?|as)\s+\d{1,2}[h:]\d{0,2}\b/gi, '')
-    .replace(/\b\d{1,2}[h:]\d{0,2}\b/gi, '')
-    .replace(/\s+/g, ' ').trim();
-  if (!titulo) titulo = texto;
-
-  return { acao: 'add', titulo: capitalize(titulo), tipo, data, hora, contato };
-}
-
-function parseData(t) {
-  const hoje = new Date(); hoje.setHours(0,0,0,0);
-  const fmt = d => d.toISOString().split('T')[0];
-
-  if (/\bhoje\b/.test(t)) return fmt(hoje);
-  if (/\bamanhã\b/.test(t)) { const d=new Date(hoje); d.setDate(d.getDate()+1); return fmt(d); }
-
-  const dias = { 'segunda':1,'terça':2,'quarta':3,'quinta':4,'sexta':5,'sábado':6,'domingo':0 };
-  for (const [nome, num] of Object.entries(dias)) {
-    if (t.includes(nome)) {
-      const d = new Date(hoje);
-      const diff = (num - d.getDay() + 7) % 7 || 7;
-      d.setDate(d.getDate() + diff);
-      return fmt(d);
-    }
-  }
-
-  // DD/MM ou DD de mês
-  const dmMatch = t.match(/(\d{1,2})[\/\s](\d{1,2})/);
-  if (dmMatch) {
-    const d = new Date(hoje.getFullYear(), parseInt(dmMatch[2])-1, parseInt(dmMatch[1]));
-    if (d < hoje) d.setFullYear(d.getFullYear()+1);
-    return fmt(d);
-  }
-
-  return fmt(hoje); // padrão: hoje
-}
-
-function parseHora(t) {
-  const m = t.match(/\b(\d{1,2})[h:](\d{2})?\b/) || t.match(/\b(\d{1,2})\s*h\b/);
-  if (!m) return 'sem hora';
-  const h = parseInt(m[1]);
-  const min = m[2] ? m[2] : '00';
-  if (h < 0 || h > 23) return 'sem hora';
-  return `${String(h).padStart(2,'0')}:${min}`;
-}
-
-function capitalize(s) { return s ? s.charAt(0).toUpperCase() + s.slice(1) : s; }
-
 // ─── UTILS ────────────────────────────────────────────────────────────────
 function hoje0() { const d=new Date(); d.setHours(0,0,0,0); return d; }
+function fmtDate(ds) { return new Date(ds+'T12:00:00').toLocaleDateString('pt-BR',{weekday:'long',day:'numeric',month:'long'}); }
+function fmtShort(ds) { return new Date(ds+'T12:00:00').toLocaleDateString('pt-BR',{weekday:'short',day:'numeric',month:'short'}); }
 function isHoje(item) {
   if (!item.data) return false;
   const d=new Date(item.data+'T12:00:00'); d.setHours(0,0,0,0);
@@ -332,25 +268,36 @@ function isSemana(item) {
   const fim=new Date(hoje0()); fim.setDate(fim.getDate()+7);
   return d>=hoje0() && d<=fim;
 }
-function fmtShort(ds) { return new Date(ds+'T12:00:00').toLocaleDateString('pt-BR',{weekday:'short',day:'numeric',month:'short'}); }
-function tipoLabel(t) { return {reuniao:'Reunião',tarefa:'Tarefa',lembrete:'Lembrete',followup:'Follow-up'}[t]||'Tarefa'; }
+function tipoLabel(t) { return {reuniao:'Reunião',tarefa:'Tarefa',lembrete:'Lembrete',followup:'Follow-up'}[t]||'Compromisso'; }
 function dotClass(t)  { return {reuniao:'dot-reuniao',tarefa:'dot-tarefa',lembrete:'dot-lembrete',followup:'dot-followup'}[t]||'dot-tarefa'; }
 function tagClass(t)  { return {reuniao:'tag-reuniao',tarefa:'tag-tarefa',lembrete:'tag-lembrete',followup:'tag-followup'}[t]||'tag-tarefa'; }
 
-// ─── RENDER ───────────────────────────────────────────────────────────────
+function proxDia(diaSemana) {
+  const dias = {seg:1,ter:2,qua:3,qui:4,sex:5,sab:6,dom:0};
+  const hoje = new Date(); hoje.setHours(0,0,0,0);
+  const target = dias[diaSemana];
+  const diff = (target - hoje.getDay() + 7) % 7 || 7;
+  const d = new Date(hoje); d.setDate(d.getDate()+diff);
+  return d.toISOString().split('T')[0];
+}
+function hojeStr() { return new Date().toISOString().split('T')[0]; }
+function amanhaStr() { const d=new Date(); d.setDate(d.getDate()+1); return d.toISOString().split('T')[0]; }
+
+// ─── RENDER AGENDA ────────────────────────────────────────────────────────
 function renderHeader() {
   document.getElementById('headerDate').textContent =
     new Date().toLocaleDateString('pt-BR',{weekday:'short',day:'numeric',month:'short'}).toUpperCase();
   const itens = agenda.filter(i=>isHoje(i));
   const r=itens.filter(i=>i.tipo==='reuniao').length, t=itens.filter(i=>i.tipo!=='reuniao').length;
   let s='Nada agendado para hoje.';
-  if (itens.length) { const p=[]; if(r) p.push(`${r} reunião${r>1?'ões':''}`); if(t) p.push(`${t} tarefa${t>1?'s':''}`); s=`Hoje: <strong>${p.join(' · ')}</strong>`; }
+  if (itens.length) { const p=[]; if(r) p.push(`${r} reunião${r>1?'ões':''}`); if(t) p.push(`${t} item${t>1?'s':''}`); s=`Hoje: <strong>${p.join(' · ')}</strong>`; }
   document.getElementById('daySummary').innerHTML=s;
   document.getElementById('badgeHoje').textContent=itens.length;
 }
 
 function renderCard(item) {
   const temHora = item.hora && item.hora!=='sem hora';
+  const sub = [item.contato, item.assunto].filter(Boolean).join(' · ');
   return `<div class="event-card" id="ev-${item.id}">
     <div class="event-dot ${dotClass(item.tipo)}"></div>
     <div class="event-body">
@@ -358,9 +305,9 @@ function renderCard(item) {
       <div class="event-meta">
         ${temHora?`<span class="event-time">${item.hora}</span>`:''}
         <span class="event-tag ${tagClass(item.tipo)}">${tipoLabel(item.tipo)}</span>
-        ${item.contato?`<span>👤 ${item.contato}</span>`:''}
         ${item.gcalId?`<span class="gcal-ok">✓ Calendar</span>`:''}
       </div>
+      ${sub?`<div style="font-size:12px;color:var(--muted);margin-bottom:6px">${sub}</div>`:''}
       <button class="del-btn" onclick="deleteItem('${item.id}')">Remover</button>
     </div>
   </div>`;
@@ -374,13 +321,13 @@ function renderHoje() {
     return a.hora.localeCompare(b.hora);
   });
   lista.innerHTML = itens.length ? itens.map(renderCard).join('') :
-    `<div class="empty"><div class="empty-icon">📅</div>Nada para hoje.<br>Use o Assistente para adicionar.</div>`;
+    `<div class="empty"><div class="empty-icon">📅</div>Nada para hoje.<br>Toque em <b>+ Novo</b> para adicionar.</div>`;
 }
 
 function renderSemana() {
   const lista=document.getElementById('listaSemana');
   const itens=agenda.filter(i=>isSemana(i)).sort((a,b)=>{
-    const da=new Date(a.data).getTime(), db=new Date(b.data).getTime();
+    const da=new Date(a.data+'T12:00:00').getTime(), db=new Date(b.data+'T12:00:00').getTime();
     if(da!==db) return da-db;
     if(!a.hora||a.hora==='sem hora') return 1;
     if(!b.hora||b.hora==='sem hora') return -1;
@@ -394,18 +341,6 @@ function renderSemana() {
 
 function renderAll() { renderHeader(); renderHoje(); renderSemana(); }
 
-// ─── ACTIONS ──────────────────────────────────────────────────────────────
-async function addItem(item) {
-  item.id = Date.now().toString();
-  item.criadoEm = new Date().toISOString();
-  if (isSignedIn) {
-    const gcalId = await createGCal(item);
-    if (gcalId) item.gcalId = gcalId;
-  }
-  agenda.push(item); save(); renderAll();
-  return item;
-}
-
 async function deleteItem(id) {
   const item = agenda.find(i=>i.id===id);
   if (item?.gcalId) await deleteGCal(item.gcalId);
@@ -418,63 +353,260 @@ function switchTab(tab, el) {
   document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
   el.classList.add('active');
   document.getElementById('view-'+tab).classList.add('active');
+  if (tab === 'assistente') iniciarFluxo();
 }
 
-// ─── CHAT ─────────────────────────────────────────────────────────────────
-function addMsg(role, text, extra='') {
-  const wrap=document.getElementById('chatWrap');
-  const div=document.createElement('div');
-  div.className=`msg ${role} ${extra}`;
-  div.innerHTML = role==='ai' ? `<div class="mlabel">Assistente</div>${text}` : text;
-  wrap.appendChild(div); wrap.scrollTop=wrap.scrollHeight;
-}
-
-function useSug(text) { document.getElementById('msgInput').value=text; sendMessage(); }
-function handleKey(e) { if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMessage();} }
-function autoResize(el) { el.style.height='auto'; el.style.height=Math.min(el.scrollHeight,100)+'px'; }
-
-async function sendMessage() {
-  const input=document.getElementById('msgInput');
-  const text=input.value.trim(); if(!text) return;
-  input.value=''; input.style.height='auto';
-
-  if(!document.getElementById('view-assistente').classList.contains('active')) {
-    document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
-    document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
-    document.querySelectorAll('.tab')[2].classList.add('active');
-    document.getElementById('view-assistente').classList.add('active');
+// ─── FLUXO URA ────────────────────────────────────────────────────────────
+function addMsg(role, html, extra='') {
+  const wrap = document.getElementById('chatWrap');
+  const div = document.createElement('div');
+  div.className = `msg ${role} ${extra}`;
+  if (role === 'ai' || role === 'success') {
+    div.innerHTML = `<div class="mlabel">${role==='success'?'Confirmado':'Assistente'}</div>${html}`;
+  } else {
+    div.innerHTML = html;
   }
+  wrap.appendChild(div);
+  setTimeout(()=>wrap.scrollTop=wrap.scrollHeight, 50);
+  return div;
+}
 
-  addMsg('user', text);
+function addOpcoes(opcoes, gridClass='') {
+  const wrap = document.getElementById('chatWrap');
+  const div = document.createElement('div');
+  div.className = `opt-grid ${gridClass}`;
+  div.id = 'opcoes-atual';
+  opcoes.forEach(op => {
+    const btn = document.createElement('button');
+    btn.className = `opt-btn${op.wide?' wide':''}`;
+    btn.innerHTML = op.num ? `<span class="opt-num">${op.num}</span>${op.label}` : op.label;
+    btn.onclick = op.fn;
+    div.appendChild(btn);
+  });
+  wrap.appendChild(div);
+  setTimeout(()=>wrap.scrollTop=wrap.scrollHeight, 50);
+}
 
-  const parsed = parseTexto(text);
+function addInputLivre(placeholder, fn) {
+  const wrap = document.getElementById('chatWrap');
+  const div = document.createElement('div');
+  div.className = 'free-input-wrap';
+  div.id = 'input-livre';
+  div.innerHTML = `<input class="free-input" id="freeField" placeholder="${placeholder}" /><button class="free-send" onclick="confirmarLivre()">OK</button>`;
+  wrap.appendChild(div);
+  setTimeout(()=>{ document.getElementById('freeField')?.focus(); wrap.scrollTop=wrap.scrollHeight; }, 100);
+  window._freeInputFn = fn;
+  document.getElementById('freeField').onkeydown = e => { if(e.key==='Enter') confirmarLivre(); };
+}
 
-  if (parsed.acao === 'consulta') {
-    const quando = parsed.quando;
-    let itens = [];
-    if (quando === 'hoje') itens = agenda.filter(i=>isHoje(i));
-    else if (quando === 'amanha') {
-      const am = new Date(); am.setDate(am.getDate()+1); am.setHours(0,0,0,0);
-      itens = agenda.filter(i=>{ if(!i.data) return false; const d=new Date(i.data+'T12:00:00'); d.setHours(0,0,0,0); return d.getTime()===am.getTime(); });
-    } else itens = agenda.filter(i=>isSemana(i));
+function confirmarLivre() {
+  const val = document.getElementById('freeField')?.value?.trim();
+  if (!val) return;
+  document.getElementById('input-livre')?.remove();
+  addMsg('user', val);
+  if (window._freeInputFn) window._freeInputFn(val);
+}
 
-    if (!itens.length) {
-      addMsg('ai', `Nada agendado para ${quando==='hoje'?'hoje':quando==='amanha'?'amanhã':'a semana'}.`);
+function limparOpcoes() {
+  document.getElementById('opcoes-atual')?.remove();
+  document.getElementById('input-livre')?.remove();
+}
+
+function iniciarFluxo() {
+  fluxo = { etapa: 'menu', tipo: null, contato: null, data: null, hora: null, assunto: null };
+  document.getElementById('chatWrap').innerHTML = '';
+  document.getElementById('inputHint').textContent = 'Selecione uma opção';
+
+  addMsg('ai', 'O que deseja fazer?');
+  addOpcoes([
+    { num:'1', label:'📅 Reunião',        fn: ()=>escolherTipo('reuniao') },
+    { num:'2', label:'✅ Tarefa',          fn: ()=>escolherTipo('tarefa') },
+    { num:'3', label:'🔔 Lembrete',        fn: ()=>escolherTipo('lembrete') },
+    { num:'4', label:'🔄 Follow-up',       fn: ()=>escolherTipo('followup') },
+    { num:'5', label:'📋 Ver agenda hoje', fn: ()=>verAgenda(), wide: true },
+  ]);
+}
+
+function escolherTipo(tipo) {
+  limparOpcoes();
+  fluxo.tipo = tipo;
+  addMsg('user', tipoLabel(tipo));
+
+  if (tipo === 'reuniao') {
+    addMsg('ai', 'Com quem é a reunião?');
+    addInputLivre('Nome do contato ou empresa', (val) => {
+      fluxo.contato = val;
+      perguntarData();
+    });
+  } else if (tipo === 'tarefa') {
+    addMsg('ai', 'Qual é a tarefa?');
+    addInputLivre('Descreva a tarefa', (val) => {
+      fluxo.assunto = val;
+      perguntarData();
+    });
+  } else if (tipo === 'lembrete') {
+    addMsg('ai', 'Do que precisa ser lembrado?');
+    addInputLivre('Ex: ligar pro João, enviar proposta...', (val) => {
+      fluxo.assunto = val;
+      perguntarData();
+    });
+  } else if (tipo === 'followup') {
+    addMsg('ai', 'Follow-up com quem?');
+    addInputLivre('Nome do contato ou cliente', (val) => {
+      fluxo.contato = val;
+      perguntarData();
+    });
+  }
+}
+
+function perguntarData() {
+  addMsg('ai', 'Quando?');
+  addOpcoes([
+    { label: 'Hoje',   fn: ()=>escolherData(hojeStr(),'Hoje') },
+    { label: 'Amanhã', fn: ()=>escolherData(amanhaStr(),'Amanhã') },
+    { label: 'Esta semana', fn: ()=>perguntarDiaSemana(), wide: true },
+  ]);
+}
+
+function perguntarDiaSemana() {
+  limparOpcoes();
+  addMsg('user', 'Esta semana');
+  addMsg('ai', 'Qual dia?');
+  addOpcoes([
+    { label:'Seg', fn:()=>escolherData(proxDia('seg'),'Segunda') },
+    { label:'Ter', fn:()=>escolherData(proxDia('ter'),'Terça') },
+    { label:'Qua', fn:()=>escolherData(proxDia('qua'),'Quarta') },
+    { label:'Qui', fn:()=>escolherData(proxDia('qui'),'Quinta') },
+    { label:'Sex', fn:()=>escolherData(proxDia('sex'),'Sexta') },
+  ], 'three');
+}
+
+function escolherData(dataStr, label) {
+  limparOpcoes();
+  fluxo.data = dataStr;
+  addMsg('user', label);
+  perguntarHora();
+}
+
+function perguntarHora() {
+  addMsg('ai', 'Qual horário?');
+  addOpcoes([
+    { label:'08:00', fn:()=>escolherHora('08:00') },
+    { label:'09:00', fn:()=>escolherHora('09:00') },
+    { label:'10:00', fn:()=>escolherHora('10:00') },
+    { label:'11:00', fn:()=>escolherHora('11:00') },
+    { label:'14:00', fn:()=>escolherHora('14:00') },
+    { label:'15:00', fn:()=>escolherHora('15:00') },
+    { label:'16:00', fn:()=>escolherHora('16:00') },
+    { label:'17:00', fn:()=>escolherHora('17:00') },
+    { label:'18:00', fn:()=>escolherHora('18:00') },
+    { label:'Outro horário', fn:()=>horarioLivre(), wide:true },
+  ]);
+}
+
+function escolherHora(hora) {
+  limparOpcoes();
+  fluxo.hora = hora;
+  addMsg('user', hora);
+  perguntarAssunto();
+}
+
+function horarioLivre() {
+  limparOpcoes();
+  addMsg('user', 'Outro horário');
+  addMsg('ai', 'Digite o horário:');
+  addInputLivre('Ex: 13:30', (val) => {
+    const m = val.match(/(\d{1,2})[h:](\d{2})?/);
+    if (m) {
+      fluxo.hora = `${String(parseInt(m[1])).padStart(2,'0')}:${m[2]||'00'}`;
     } else {
-      const lista = itens.sort((a,b)=>{ if(!a.hora||a.hora==='sem hora') return 1; if(!b.hora||b.hora==='sem hora') return -1; return a.hora.localeCompare(b.hora); })
-        .map(i=>`• ${i.hora&&i.hora!=='sem hora'?i.hora+' — ':''}<b>${i.titulo}</b> <span style="opacity:0.6;font-size:11px">${tipoLabel(i.tipo)}</span>`).join('<br>');
-      addMsg('ai', `${quando==='hoje'?'Hoje':quando==='amanha'?'Amanhã':'Próximos 7 dias'}:<br><br>${lista}`);
+      fluxo.hora = val;
     }
-    return;
+    perguntarAssunto();
+  });
+}
+
+function perguntarAssunto() {
+  // Se já tem assunto (tarefa/lembrete), pula
+  if (fluxo.assunto) { confirmarItem(); return; }
+
+  addMsg('ai', fluxo.tipo === 'reuniao' ? 'Assunto da reunião?' : 'Mais detalhes? (opcional)');
+  addInputLivre(
+    fluxo.tipo === 'reuniao' ? 'Ex: apresentação de proposta, renovação...' : 'Deixe em branco para pular',
+    (val) => { fluxo.assunto = val || null; confirmarItem(); }
+  );
+}
+
+async function confirmarItem() {
+  limparOpcoes();
+
+  // Montar título
+  let titulo = '';
+  if (fluxo.tipo === 'reuniao') titulo = `Reunião${fluxo.contato?' com '+fluxo.contato:''}${fluxo.assunto?' — '+fluxo.assunto:''}`;
+  else if (fluxo.tipo === 'tarefa') titulo = fluxo.assunto || 'Tarefa';
+  else if (fluxo.tipo === 'lembrete') titulo = fluxo.assunto || 'Lembrete';
+  else if (fluxo.tipo === 'followup') titulo = `Follow-up${fluxo.contato?' — '+fluxo.contato:''}`;
+
+  const item = {
+    id: Date.now().toString(),
+    titulo,
+    tipo: fluxo.tipo,
+    data: fluxo.data,
+    hora: fluxo.hora || 'sem hora',
+    contato: fluxo.contato,
+    assunto: fluxo.assunto,
+    criadoEm: new Date().toISOString(),
+    gcalId: null
+  };
+
+  if (isSignedIn) {
+    const gcalId = await createGCal(item);
+    if (gcalId) item.gcalId = gcalId;
   }
 
-  if (parsed.acao === 'add') {
-    const item = await addItem(parsed);
-    const temHora = item.hora && item.hora !== 'sem hora';
-    const dataFmt = new Date(item.data+'T12:00:00').toLocaleDateString('pt-BR',{weekday:'long',day:'numeric',month:'long'});
-    const gcalMsg = item.gcalId ? '<br>✓ Salvo no Google Calendar com lembrete 30 min antes.' : (!isSignedIn?'<br>Faça login para salvar no Google Calendar.':'');
-    addMsg('ai', `Adicionado: <b>${item.titulo}</b><br>${dataFmt}${temHora?' às '+item.hora:''}${gcalMsg}`, item.gcalId?'success':'');
+  agenda.push(item); save(); renderAll();
+
+  const dataFmt = fmtDate(item.data);
+  const temHora = item.hora && item.hora !== 'sem hora';
+  const gcalMsg = item.gcalId ? '<br>✓ Salvo no Google Calendar — lembrete 30 min antes.' : '';
+
+  addMsg('success',
+    `<b>${titulo}</b><br>${dataFmt}${temHora?' às '+item.hora:''}${gcalMsg}`
+  );
+
+  // Opções após confirmar
+  setTimeout(()=>{
+    addOpcoes([
+      { label:'+ Adicionar outro', fn:()=>iniciarFluxo(), wide:true },
+      { label:'Ver agenda de hoje', fn:()=>verAgenda(), wide:true },
+    ], 'single');
+  }, 400);
+}
+
+function verAgenda() {
+  limparOpcoes();
+  const itens = agenda.filter(i=>isHoje(i)).sort((a,b)=>{
+    if(!a.hora||a.hora==='sem hora') return 1;
+    if(!b.hora||b.hora==='sem hora') return -1;
+    return a.hora.localeCompare(b.hora);
+  });
+
+  if (!itens.length) {
+    addMsg('ai', 'Nada agendado para hoje.');
+  } else {
+    const lista = itens.map(i=>{
+      const h = i.hora&&i.hora!=='sem hora'?`<span style="color:var(--gold);font-family:'DM Mono',monospace">${i.hora}</span> — `:'';
+      const sub = [i.contato, i.assunto].filter(Boolean).join(' · ');
+      return `${h}<b>${i.titulo}</b>${sub?`<br><span style="font-size:11px;opacity:0.6">${sub}</span>`:''}`;
+    }).join('<br><br>');
+    addMsg('ai', `Sua agenda de hoje:<br><br>${lista}`);
   }
+
+  setTimeout(()=>{
+    addOpcoes([
+      { label:'+ Adicionar compromisso', fn:()=>iniciarFluxo(), wide:true },
+    ], 'single');
+  }, 300);
 }
 </script>
 </body>
