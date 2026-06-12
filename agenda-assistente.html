@@ -14,10 +14,12 @@
   --gold: #C9A84C; --gold-light: #E8C97A; --gold-dim: rgba(201,168,76,0.08);
   --text: #e8eaf0; --muted: #6b7a99;
   --green: #4CAF82; --green-dim: rgba(76,175,130,0.1);
-  --red: #e07070; --blue: #5b9cf6; --blue-dim: rgba(91,156,246,0.1);
+  --red: #e07070; --red-dim: rgba(224,112,112,0.1);
+  --blue: #5b9cf6; --blue-dim: rgba(91,156,246,0.1);
 }
 body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; max-width: 480px; margin: 0 auto; padding: 0 0 90px; }
 
+/* HEADER */
 .header { padding: 18px 20px 12px; border-bottom: 1px solid var(--border-dim); position: sticky; top: 0; background: var(--bg); z-index: 10; }
 .header-top { display: flex; align-items: center; justify-content: space-between; }
 .brand { font-family: 'Playfair Display', serif; font-size: 18px; color: var(--gold); }
@@ -25,6 +27,7 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--t
 .day-summary { font-size: 12px; color: var(--muted); margin-top: 4px; }
 .day-summary strong { color: var(--text); }
 
+/* AUTH */
 .auth-banner { margin: 14px 20px; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 16px; text-align: center; }
 .auth-banner p { font-size: 13px; color: var(--muted); margin-bottom: 12px; line-height: 1.5; }
 .auth-banner strong { color: var(--gold); }
@@ -35,6 +38,7 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--t
 .gcal-label { font-size: 11px; color: var(--green); }
 .logout-btn { margin-left: auto; font-size: 11px; color: var(--muted); background: none; border: none; cursor: pointer; text-decoration: underline; }
 
+/* TABS */
 .tabs { display: flex; padding: 0 20px; border-bottom: 1px solid var(--border-dim); }
 .tab { flex: 1; padding: 11px 0; font-size: 12px; font-weight: 500; color: var(--muted); background: none; border: none; border-bottom: 2px solid transparent; cursor: pointer; transition: all 0.2s; text-align: center; }
 .tab.active { color: var(--gold); border-bottom-color: var(--gold); }
@@ -42,73 +46,85 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--t
 
 .view { display: none; padding: 14px 20px; }
 .view.active { display: block; }
-.slabel { font-size: 10px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; margin-top: 16px; }
+.slabel { font-size: 10px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); margin-bottom: 10px; margin-top: 20px; }
 .slabel:first-child { margin-top: 0; }
 
-/* EVENT CARDS */
-.event-card { background: var(--surface); border: 1px solid var(--border-dim); border-radius: 8px; padding: 12px 14px; margin-bottom: 8px; display: flex; gap: 10px; transition: border-color 0.2s; }
-.event-card:hover { border-color: var(--border); }
+/* BOX REUNIÕES */
+.reunioes-box { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; margin-bottom: 16px; }
+.box-header { display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; border-bottom: 1px solid var(--border-dim); }
+.box-title { font-size: 12px; font-weight: 600; color: var(--text); display: flex; align-items: center; gap: 8px; }
+.box-title .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--blue); }
+.box-count { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--muted); }
+.reuniao-item { display: flex; align-items: flex-start; gap: 12px; padding: 12px 16px; border-bottom: 1px solid var(--border-dim); }
+.reuniao-item:last-child { border-bottom: none; }
+.reuniao-hora { font-family: 'DM Mono', monospace; font-size: 12px; color: var(--gold); min-width: 40px; flex-shrink: 0; margin-top: 1px; }
+.reuniao-info { flex: 1; }
+.reuniao-titulo { font-size: 13px; font-weight: 500; color: var(--text); line-height: 1.4; }
+.reuniao-sub { font-size: 11px; color: var(--muted); margin-top: 2px; }
+.gcal-badge { font-size: 10px; color: var(--blue); opacity: 0.7; }
+.empty-box { padding: 16px; text-align: center; font-size: 12px; color: var(--muted); }
+
+/* BOX TAREFAS */
+.tarefas-box { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; margin-bottom: 16px; }
+.tarefas-list { padding: 8px 0; }
+.tarefa-item { display: flex; align-items: center; gap: 12px; padding: 10px 16px; border-bottom: 1px solid var(--border-dim); transition: background 0.15s; }
+.tarefa-item:last-child { border-bottom: none; }
+.tarefa-num { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--muted); min-width: 18px; flex-shrink: 0; }
+.tarefa-texto { flex: 1; font-size: 13px; color: var(--text); line-height: 1.4; }
+.tarefa-texto.feita { text-decoration: line-through; color: var(--muted); }
+.tarefa-migrada { font-size: 10px; color: var(--gold); margin-left: 4px; opacity: 0.8; }
+.tarefa-acoes { display: flex; gap: 6px; flex-shrink: 0; }
+.t-btn { width: 28px; height: 28px; border-radius: 6px; border: 1px solid var(--border-dim); background: none; cursor: pointer; font-size: 13px; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
+.t-btn.ok { color: var(--green); }
+.t-btn.ok:hover { background: var(--green-dim); border-color: var(--green); }
+.t-btn.nao { color: var(--red); }
+.t-btn.nao:hover { background: var(--red-dim); border-color: var(--red); }
+.t-btn.del { color: var(--muted); }
+.t-btn.del:hover { color: var(--red); border-color: var(--red); }
+
+.add-tarefa-bar { display: flex; gap: 8px; padding: 10px 16px; border-top: 1px solid var(--border-dim); }
+.add-tarefa-input { flex: 1; background: var(--surface2); border: 1px solid var(--border-dim); border-radius: 6px; padding: 8px 12px; font-family: 'DM Sans', sans-serif; font-size: 13px; color: var(--text); outline: none; transition: border-color 0.2s; }
+.add-tarefa-input:focus { border-color: var(--gold); }
+.add-tarefa-input::placeholder { color: var(--muted); font-size: 12px; }
+.add-tarefa-btn { padding: 8px 12px; background: var(--gold); border: none; border-radius: 6px; color: #060d18; font-size: 12px; font-weight: 600; cursor: pointer; transition: background 0.2s; white-space: nowrap; }
+.add-tarefa-btn:hover { background: var(--gold-light); }
+
+/* SEMANA */
+.event-card { background: var(--surface); border: 1px solid var(--border-dim); border-radius: 8px; padding: 12px 14px; margin-bottom: 8px; display: flex; gap: 10px; }
 .event-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; margin-top: 5px; }
-.dot-reuniao { background: var(--blue); } .dot-tarefa { background: var(--gold); }
-.dot-lembrete { background: var(--green); } .dot-followup { background: #b07ff0; }
+.dot-reuniao { background: var(--blue); } .dot-gcal { background: var(--blue); }
 .event-body { flex: 1; }
-.event-title { font-size: 13px; font-weight: 500; color: var(--text); margin-bottom: 4px; line-height: 1.4; }
+.event-title { font-size: 13px; font-weight: 500; color: var(--text); margin-bottom: 4px; }
 .event-meta { font-size: 11px; color: var(--muted); display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin-bottom: 6px; }
 .event-time { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--gold); }
-.event-tag { font-size: 10px; padding: 2px 6px; border-radius: 3px; font-weight: 500; }
-.tag-reuniao { background: var(--blue-dim); color: var(--blue); }
-.tag-tarefa { background: var(--gold-dim); color: var(--gold); }
-.tag-lembrete { background: var(--green-dim); color: var(--green); }
-.tag-followup { background: rgba(176,127,240,0.1); color: #b07ff0; }
-.gcal-ok { font-size: 10px; color: var(--green); opacity: 0.8; }
-.del-btn { font-size: 10px; padding: 2px 8px; border-radius: 3px; border: 1px solid var(--border-dim); background: none; color: var(--muted); cursor: pointer; font-family: 'DM Sans', sans-serif; }
+.event-tag { font-size: 10px; padding: 2px 6px; border-radius: 3px; font-weight: 500; background: var(--blue-dim); color: var(--blue); }
+.del-btn { font-size: 10px; padding: 2px 8px; border-radius: 3px; border: 1px solid var(--border-dim); background: none; color: var(--muted); cursor: pointer; }
 .del-btn:hover { border-color: var(--red); color: var(--red); }
 .empty { text-align: center; padding: 36px 20px; color: var(--muted); font-size: 13px; line-height: 1.8; }
 .empty-icon { font-size: 26px; margin-bottom: 8px; }
 
 /* ASSISTENTE / URA */
 .chat-wrap { display: flex; flex-direction: column; gap: 10px; padding-bottom: 8px; }
-
 .msg { max-width: 92%; padding: 11px 14px; border-radius: 10px; font-size: 13px; line-height: 1.6; }
 .msg.ai { background: var(--surface); border: 1px solid var(--border-dim); align-self: flex-start; border-radius: 10px 10px 10px 2px; }
 .msg.ai .mlabel { font-size: 10px; color: var(--gold); font-weight: 600; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 5px; }
-.msg.user { background: var(--gold-dim); border: 1px solid var(--border); align-self: flex-end; border-radius: 10px 10px 2px 10px; font-size: 13px; }
+.msg.user { background: var(--gold-dim); border: 1px solid var(--border); align-self: flex-end; border-radius: 10px 10px 2px 10px; }
 .msg.success { background: var(--green-dim); border-color: rgba(76,175,130,0.25); align-self: flex-start; border-radius: 10px 10px 10px 2px; }
 .msg.success .mlabel { color: var(--green); }
 
-/* BOTÕES DE OPÇÃO */
 .opt-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 10px; }
 .opt-grid.single { grid-template-columns: 1fr; }
 .opt-grid.three { grid-template-columns: 1fr 1fr 1fr; }
-.opt-btn {
-  padding: 11px 10px;
-  background: var(--surface2);
-  border: 1px solid var(--border-dim);
-  border-radius: 8px;
-  color: var(--text);
-  font-family: 'DM Sans', sans-serif;
-  font-size: 13px;
-  font-weight: 500;
-  cursor: pointer;
-  text-align: center;
-  transition: all 0.2s;
-  line-height: 1.3;
-}
+.opt-btn { padding: 11px 10px; background: var(--surface2); border: 1px solid var(--border-dim); border-radius: 8px; color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 500; cursor: pointer; text-align: center; transition: all 0.2s; line-height: 1.3; }
 .opt-btn:hover { border-color: var(--gold); color: var(--gold); background: var(--gold-dim); }
 .opt-btn .opt-num { display: block; font-family: 'DM Mono', monospace; font-size: 10px; color: var(--gold); margin-bottom: 3px; }
 .opt-btn.wide { grid-column: 1 / -1; }
-
-/* INPUT LIVRE */
 .free-input-wrap { margin-top: 10px; display: flex; gap: 8px; }
 .free-input { flex: 1; background: var(--surface2); border: 1px solid var(--border-dim); border-radius: 8px; padding: 11px 14px; font-family: 'DM Sans', sans-serif; font-size: 14px; color: var(--text); outline: none; transition: border-color 0.2s; }
 .free-input:focus { border-color: var(--gold); }
 .free-input::placeholder { color: var(--muted); font-size: 13px; }
-.free-send { padding: 11px 16px; background: var(--gold); border: none; border-radius: 8px; color: #060d18; font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 600; cursor: pointer; transition: background 0.2s; white-space: nowrap; }
+.free-send { padding: 11px 16px; background: var(--gold); border: none; border-radius: 8px; color: #060d18; font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap; }
 .free-send:hover { background: var(--gold-light); }
-
-/* REINICIAR */
-.restart-btn { margin-top: 12px; padding: 9px 16px; background: transparent; border: 1px solid var(--border-dim); border-radius: 8px; color: var(--muted); font-family: 'DM Sans', sans-serif; font-size: 12px; cursor: pointer; transition: all 0.2s; width: 100%; text-align: center; }
-.restart-btn:hover { border-color: var(--border); color: var(--text); }
 
 .input-bar { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 480px; background: var(--bg); border-top: 1px solid var(--border-dim); padding: 10px 14px; display: flex; gap: 8px; align-items: center; }
 .input-bar-hint { flex: 1; font-size: 12px; color: var(--muted); text-align: center; }
@@ -126,7 +142,7 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--t
 
 <div id="authSection" style="display:none">
   <div class="auth-banner">
-    <p>Conecte sua conta Google para salvar compromissos direto no <strong>Google Calendar</strong>.</p>
+    <p>Conecte sua conta Google para sincronizar com o <strong>Google Calendar</strong>.</p>
     <button class="google-btn" onclick="signIn()">
       <svg viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
       Entrar com Google
@@ -149,8 +165,41 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--t
   <button class="tab" onclick="switchTab('assistente',this)">+ Novo</button>
 </div>
 
-<div class="view active" id="view-hoje"><div id="listaHoje"></div></div>
+<!-- VIEW HOJE -->
+<div class="view active" id="view-hoje">
+
+  <!-- BOX REUNIÕES -->
+  <div class="slabel">Reuniões</div>
+  <div class="reunioes-box">
+    <div class="box-header">
+      <div class="box-title"><div class="dot"></div> Agenda do dia</div>
+      <div class="box-count" id="reunioesCount">—</div>
+    </div>
+    <div id="reunioesList"><div class="empty-box">Carregando...</div></div>
+  </div>
+
+  <!-- BOX TAREFAS -->
+  <div class="slabel">Tarefas do dia</div>
+  <div class="tarefas-box">
+    <div class="box-header">
+      <div class="box-title" style="gap:6px">
+        <span style="font-size:14px">✅</span> Lista de tarefas
+      </div>
+      <div class="box-count" id="tarefasCount">—</div>
+    </div>
+    <div class="tarefas-list" id="tarefasList"></div>
+    <div class="add-tarefa-bar">
+      <input class="add-tarefa-input" id="novaTarefaInput" placeholder="+ Nova tarefa..." onkeydown="if(event.key==='Enter') adicionarTarefa()">
+      <button class="add-tarefa-btn" onclick="adicionarTarefa()">Adicionar</button>
+    </div>
+  </div>
+
+</div>
+
+<!-- VIEW SEMANA -->
 <div class="view" id="view-semana"><div id="listaSemana"></div></div>
+
+<!-- VIEW ASSISTENTE -->
 <div class="view" id="view-assistente">
   <div class="chat-wrap" id="chatWrap"></div>
 </div>
@@ -161,17 +210,18 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--t
 
 <script>
 const CLIENT_ID = '863893997761-95era6h3airlceot1a94j4fp14ksnp1j.apps.googleusercontent.com';
-const SCOPES = 'https://www.googleapis.com/auth/calendar.events https://www.googleapis.com/auth/userinfo.profile';
-const SK = 'agenda_bruno_v4';
+const SCOPES = 'https://www.googleapis.com/auth/calendar.events https://www.googleapis.com/auth/calendar.readonly https://www.googleapis.com/auth/userinfo.profile';
+const SK_REUNIOES = 'agenda_reunioes_v1';
+const SK_TAREFAS  = 'agenda_tarefas_v1';
 
 let tokenClient, accessToken = null, isSignedIn = false;
-let agenda = load();
+let reunioes = loadJSON(SK_REUNIOES, []);
+let tarefas  = loadJSON(SK_TAREFAS, []);
+let gcalEventos = [];
+let fluxo = {};
 
-// Estado do fluxo URA
-let fluxo = { etapa: 'menu', tipo: null, contato: null, data: null, hora: null, assunto: null };
-
-function load() { try { return JSON.parse(localStorage.getItem(SK)||'[]'); } catch { return []; } }
-function save() { localStorage.setItem(SK, JSON.stringify(agenda)); }
+function loadJSON(key, def) { try { return JSON.parse(localStorage.getItem(key)||'null') || def; } catch { return def; } }
+function saveJSON(key, val) { localStorage.setItem(key, JSON.stringify(val)); }
 
 // ─── AUTH ──────────────────────────────────────────────────────────────────
 window.onload = () => {
@@ -182,14 +232,15 @@ window.onload = () => {
       accessToken = r.access_token;
       isSignedIn = true;
       localStorage.setItem('gcal_tok', accessToken);
-      await fetchUser(); showUser();
+      await fetchUser(); showUser(); fetchGCal();
     }
   });
   const tok = localStorage.getItem('gcal_tok');
-  if (tok) { accessToken = tok; isSignedIn = true; fetchUser(); showUser(); }
+  if (tok) { accessToken = tok; isSignedIn = true; fetchUser(); showUser(); fetchGCal(); }
   else document.getElementById('authSection').style.display = 'block';
-  renderHeader(); renderAll();
-  iniciarFluxo();
+
+  migrarTarefasAtrasadas();
+  renderHeader(); renderHoje(); renderSemana(); iniciarFluxo();
 };
 
 function signIn() { tokenClient.requestAccessToken({ prompt: 'consent' }); }
@@ -213,14 +264,34 @@ async function fetchUser() {
 }
 
 // ─── GOOGLE CALENDAR ──────────────────────────────────────────────────────
+async function fetchGCal() {
+  if (!accessToken) return;
+  try {
+    const hoje = new Date(); hoje.setHours(0,0,0,0);
+    const fim  = new Date(hoje); fim.setDate(fim.getDate()+7);
+    const url  = `https://www.googleapis.com/calendar/v3/calendars/primary/events?timeMin=${hoje.toISOString()}&timeMax=${fim.toISOString()}&singleEvents=true&orderBy=startTime&maxResults=50`;
+    const r = await fetch(url, { headers: { Authorization: `Bearer ${accessToken}` } });
+    const d = await r.json();
+    gcalEventos = (d.items||[]).map(ev => ({
+      id: 'gcal_'+ev.id, gcalId: ev.id,
+      titulo: ev.summary || 'Sem título',
+      data: ev.start?.date || ev.start?.dateTime?.split('T')[0],
+      hora: ev.start?.dateTime ? ev.start.dateTime.substring(11,16) : 'sem hora',
+      sub: ev.description || null,
+      origem: 'gcal'
+    }));
+    renderHoje(); renderSemana();
+  } catch(e) { console.error(e); }
+}
+
 async function createGCal(item) {
   if (!accessToken) return null;
   try {
     const start = buildDT(item.data, item.hora);
     const end   = buildDT(item.data, item.hora, 60);
-    const body = {
+    const body  = {
       summary: item.titulo,
-      description: [item.tipo ? tipoLabel(item.tipo) : '', item.contato||'', item.assunto||''].filter(Boolean).join(' · '),
+      description: [item.contato||'', item.assunto||''].filter(Boolean).join(' · '),
       start, end,
       reminders: { useDefault: false, overrides: [{ method:'popup', minutes:30 }] }
     };
@@ -254,98 +325,189 @@ function buildDT(dataStr, horaStr, addMin=0) {
 }
 
 // ─── UTILS ────────────────────────────────────────────────────────────────
+function hojeStr() { return new Date().toISOString().split('T')[0]; }
+function amanhaStr() { const d=new Date(); d.setDate(d.getDate()+1); return d.toISOString().split('T')[0]; }
 function hoje0() { const d=new Date(); d.setHours(0,0,0,0); return d; }
-function fmtDate(ds) { return new Date(ds+'T12:00:00').toLocaleDateString('pt-BR',{weekday:'long',day:'numeric',month:'long'}); }
-function fmtShort(ds) { return new Date(ds+'T12:00:00').toLocaleDateString('pt-BR',{weekday:'short',day:'numeric',month:'short'}); }
-function isHoje(item) {
-  if (!item.data) return false;
-  const d=new Date(item.data+'T12:00:00'); d.setHours(0,0,0,0);
+function isHojeData(ds) {
+  if (!ds) return false;
+  const d=new Date(ds+'T12:00:00'); d.setHours(0,0,0,0);
   return d.getTime()===hoje0().getTime();
 }
-function isSemana(item) {
-  if (!item.data) return false;
-  const d=new Date(item.data+'T12:00:00'); d.setHours(0,0,0,0);
+function isSemanaData(ds) {
+  if (!ds) return false;
+  const d=new Date(ds+'T12:00:00'); d.setHours(0,0,0,0);
   const fim=new Date(hoje0()); fim.setDate(fim.getDate()+7);
   return d>=hoje0() && d<=fim;
 }
-function tipoLabel(t) { return {reuniao:'Reunião',tarefa:'Tarefa',lembrete:'Lembrete',followup:'Follow-up'}[t]||'Compromisso'; }
-function dotClass(t)  { return {reuniao:'dot-reuniao',tarefa:'dot-tarefa',lembrete:'dot-lembrete',followup:'dot-followup'}[t]||'dot-tarefa'; }
-function tagClass(t)  { return {reuniao:'tag-reuniao',tarefa:'tag-tarefa',lembrete:'tag-lembrete',followup:'tag-followup'}[t]||'tag-tarefa'; }
-
-function proxDia(diaSemana) {
-  const dias = {seg:1,ter:2,qua:3,qui:4,sex:5,sab:6,dom:0};
-  const hoje = new Date(); hoje.setHours(0,0,0,0);
-  const target = dias[diaSemana];
-  const diff = (target - hoje.getDay() + 7) % 7 || 7;
-  const d = new Date(hoje); d.setDate(d.getDate()+diff);
+function fmtDate(ds) { return new Date(ds+'T12:00:00').toLocaleDateString('pt-BR',{weekday:'long',day:'numeric',month:'long'}); }
+function fmtShort(ds) { return new Date(ds+'T12:00:00').toLocaleDateString('pt-BR',{weekday:'short',day:'numeric',month:'short'}); }
+function proxDia(n) {
+  const map={seg:1,ter:2,qua:3,qui:4,sex:5,sab:6,dom:0};
+  const h=new Date(); h.setHours(0,0,0,0);
+  const diff=(map[n]-h.getDay()+7)%7||7;
+  const d=new Date(h); d.setDate(d.getDate()+diff);
   return d.toISOString().split('T')[0];
 }
-function hojeStr() { return new Date().toISOString().split('T')[0]; }
-function amanhaStr() { const d=new Date(); d.setDate(d.getDate()+1); return d.toISOString().split('T')[0]; }
 
-// ─── RENDER AGENDA ────────────────────────────────────────────────────────
-function renderHeader() {
-  document.getElementById('headerDate').textContent =
-    new Date().toLocaleDateString('pt-BR',{weekday:'short',day:'numeric',month:'short'}).toUpperCase();
-  const itens = agenda.filter(i=>isHoje(i));
-  const r=itens.filter(i=>i.tipo==='reuniao').length, t=itens.filter(i=>i.tipo!=='reuniao').length;
-  let s='Nada agendado para hoje.';
-  if (itens.length) { const p=[]; if(r) p.push(`${r} reunião${r>1?'ões':''}`); if(t) p.push(`${t} item${t>1?'s':''}`); s=`Hoje: <strong>${p.join(' · ')}</strong>`; }
-  document.getElementById('daySummary').innerHTML=s;
-  document.getElementById('badgeHoje').textContent=itens.length;
+// ─── TAREFAS ──────────────────────────────────────────────────────────────
+function migrarTarefasAtrasadas() {
+  const hoje = hojeStr();
+  let mudou = false;
+  tarefas.forEach(t => {
+    if (t.data < hoje && t.status === 'naofeita') {
+      t.data = hoje;
+      t.migrada = true;
+      mudou = true;
+    }
+  });
+  if (mudou) saveJSON(SK_TAREFAS, tarefas);
 }
 
-function renderCard(item) {
-  const temHora = item.hora && item.hora!=='sem hora';
-  const sub = [item.contato, item.assunto].filter(Boolean).join(' · ');
-  return `<div class="event-card" id="ev-${item.id}">
-    <div class="event-dot ${dotClass(item.tipo)}"></div>
-    <div class="event-body">
-      <div class="event-title">${item.titulo}</div>
-      <div class="event-meta">
-        ${temHora?`<span class="event-time">${item.hora}</span>`:''}
-        <span class="event-tag ${tagClass(item.tipo)}">${tipoLabel(item.tipo)}</span>
-        ${item.gcalId?`<span class="gcal-ok">✓ Calendar</span>`:''}
+function adicionarTarefa() {
+  const input = document.getElementById('novaTarefaInput');
+  const texto = input.value.trim();
+  if (!texto) return;
+  tarefas.push({ id: Date.now().toString(), texto, data: hojeStr(), status: 'pendente', migrada: false });
+  saveJSON(SK_TAREFAS, tarefas);
+  input.value = '';
+  renderTarefas();
+  renderHeader();
+}
+
+function marcarTarefa(id, status) {
+  const t = tarefas.find(t=>t.id===id);
+  if (t) { t.status = status; saveJSON(SK_TAREFAS, tarefas); }
+  renderTarefas(); renderHeader();
+}
+
+function deletarTarefa(id) {
+  tarefas = tarefas.filter(t=>t.id!==id);
+  saveJSON(SK_TAREFAS, tarefas);
+  renderTarefas(); renderHeader();
+}
+
+function renderTarefas() {
+  const lista = document.getElementById('tarefasList');
+  const hoje = hojeStr();
+  const itens = tarefas.filter(t=>t.data===hoje);
+
+  document.getElementById('tarefasCount').textContent =
+    `${itens.filter(t=>t.status==='feita').length}/${itens.length} feitas`;
+
+  if (!itens.length) {
+    lista.innerHTML = '<div class="empty-box">Nenhuma tarefa para hoje.</div>';
+    return;
+  }
+
+  lista.innerHTML = itens.map((t, i) => `
+    <div class="tarefa-item">
+      <div class="tarefa-num">${i+1}.</div>
+      <div class="tarefa-texto ${t.status==='feita'?'feita':''}">
+        ${t.texto}${t.migrada?`<span class="tarefa-migrada">↩ ontem</span>`:''}
       </div>
-      ${sub?`<div style="font-size:12px;color:var(--muted);margin-bottom:6px">${sub}</div>`:''}
-      <button class="del-btn" onclick="deleteItem('${item.id}')">Remover</button>
+      <div class="tarefa-acoes">
+        ${t.status!=='feita' ? `<button class="t-btn ok" onclick="marcarTarefa('${t.id}','feita')" title="Feito">✓</button>` : ''}
+        ${t.status==='pendente' ? `<button class="t-btn nao" onclick="marcarTarefa('${t.id}','naofeita')" title="Não feito">✗</button>` : ''}
+        <button class="t-btn del" onclick="deletarTarefa('${t.id}')" title="Remover">🗑</button>
+      </div>
     </div>
-  </div>`;
+  `).join('');
 }
 
-function renderHoje() {
-  const lista=document.getElementById('listaHoje');
-  const itens=agenda.filter(i=>isHoje(i)).sort((a,b)=>{
+// ─── RENDER REUNIÕES ──────────────────────────────────────────────────────
+function renderReunioes() {
+  // Merge: reuniões salvas localmente + gcal (sem duplicar)
+  const localGcalIds = new Set(reunioes.filter(r=>r.gcalId).map(r=>r.gcalId));
+  const gcalHoje = gcalEventos.filter(e=>isHojeData(e.data) && !localGcalIds.has(e.gcalId));
+  const locaisHoje = reunioes.filter(r=>isHojeData(r.data));
+  const todas = [...locaisHoje, ...gcalHoje].sort((a,b)=>{
     if(!a.hora||a.hora==='sem hora') return 1;
     if(!b.hora||b.hora==='sem hora') return -1;
     return a.hora.localeCompare(b.hora);
   });
-  lista.innerHTML = itens.length ? itens.map(renderCard).join('') :
-    `<div class="empty"><div class="empty-icon">📅</div>Nada para hoje.<br>Toque em <b>+ Novo</b> para adicionar.</div>`;
+
+  document.getElementById('reunioesCount').textContent = `${todas.length} reunião${todas.length!==1?'ões':''}`;
+
+  const lista = document.getElementById('reunioesList');
+  if (!todas.length) {
+    lista.innerHTML = '<div class="empty-box">Nenhuma reunião hoje.</div>';
+    return;
+  }
+
+  lista.innerHTML = todas.map(r => {
+    const temHora = r.hora && r.hora !== 'sem hora';
+    const sub = r.origem==='gcal' ? (r.sub||'Google Calendar') : [r.contato, r.assunto].filter(Boolean).join(' · ');
+    return `<div class="reuniao-item">
+      <div class="reuniao-hora">${temHora?r.hora:'—'}</div>
+      <div class="reuniao-info">
+        <div class="reuniao-titulo">${r.titulo}</div>
+        ${sub?`<div class="reuniao-sub">${sub}${r.origem==='gcal'?'':''}</div>`:''}
+      </div>
+      ${r.origem!=='gcal'&&r.id?`<button class="del-btn" onclick="deletarReuniao('${r.id}')">✕</button>`:''}
+    </div>`;
+  }).join('');
 }
 
+async function deletarReuniao(id) {
+  const r = reunioes.find(r=>r.id===id);
+  if (r?.gcalId) await deleteGCal(r.gcalId);
+  reunioes = reunioes.filter(r=>r.id!==id);
+  saveJSON(SK_REUNIOES, reunioes);
+  renderHoje();
+}
+
+// ─── RENDER SEMANA ────────────────────────────────────────────────────────
 function renderSemana() {
-  const lista=document.getElementById('listaSemana');
-  const itens=agenda.filter(i=>isSemana(i)).sort((a,b)=>{
+  const lista = document.getElementById('listaSemana');
+  const localGcalIds = new Set(reunioes.filter(r=>r.gcalId).map(r=>r.gcalId));
+  const gcalSem = gcalEventos.filter(e=>isSemanaData(e.data)&&!localGcalIds.has(e.gcalId));
+  const locaisSem = reunioes.filter(r=>isSemanaData(r.data));
+  const todos = [...locaisSem,...gcalSem].sort((a,b)=>{
     const da=new Date(a.data+'T12:00:00').getTime(), db=new Date(b.data+'T12:00:00').getTime();
     if(da!==db) return da-db;
     if(!a.hora||a.hora==='sem hora') return 1;
     if(!b.hora||b.hora==='sem hora') return -1;
     return a.hora.localeCompare(b.hora);
   });
-  if (!itens.length) { lista.innerHTML=`<div class="empty"><div class="empty-icon">🗓️</div>Nada nos próximos 7 dias.</div>`; return; }
+  if (!todos.length) { lista.innerHTML=`<div class="empty"><div class="empty-icon">🗓️</div>Nenhuma reunião nos próximos 7 dias.</div>`; return; }
   const grupos={};
-  itens.forEach(i=>{ const k=new Date(i.data+'T12:00:00').toDateString(); if(!grupos[k]) grupos[k]={label:fmtShort(i.data),items:[]}; grupos[k].items.push(i); });
-  lista.innerHTML=Object.values(grupos).map(g=>`<div class="slabel">${g.label}</div>${g.items.map(renderCard).join('')}`).join('');
+  todos.forEach(r=>{ const k=new Date(r.data+'T12:00:00').toDateString(); if(!grupos[k]) grupos[k]={label:fmtShort(r.data),items:[]}; grupos[k].items.push(r); });
+  lista.innerHTML = Object.values(grupos).map(g=>`
+    <div class="slabel">${g.label}</div>
+    ${g.items.map(r=>{
+      const temHora=r.hora&&r.hora!=='sem hora';
+      const sub=r.origem==='gcal'?(r.sub||''):[r.contato,r.assunto].filter(Boolean).join(' · ');
+      return `<div class="event-card">
+        <div class="event-dot dot-reuniao"></div>
+        <div class="event-body">
+          <div class="event-title">${r.titulo}</div>
+          <div class="event-meta">
+            ${temHora?`<span class="event-time">${r.hora}</span>`:''}
+            <span class="event-tag">${r.origem==='gcal'?'Google Calendar':'Reunião'}</span>
+          </div>
+          ${sub?`<div style="font-size:11px;color:var(--muted)">${sub}</div>`:''}
+        </div>
+      </div>`;
+    }).join('')}
+  `).join('');
 }
 
-function renderAll() { renderHeader(); renderHoje(); renderSemana(); }
-
-async function deleteItem(id) {
-  const item = agenda.find(i=>i.id===id);
-  if (item?.gcalId) await deleteGCal(item.gcalId);
-  agenda = agenda.filter(i=>i.id!==id); save(); renderAll();
+// ─── RENDER HEADER / HOJE ─────────────────────────────────────────────────
+function renderHeader() {
+  document.getElementById('headerDate').textContent =
+    new Date().toLocaleDateString('pt-BR',{weekday:'short',day:'numeric',month:'short'}).toUpperCase();
+  const hoje = hojeStr();
+  const nTarefas = tarefas.filter(t=>t.data===hoje&&t.status==='pendente').length;
+  const localGcalIds = new Set(reunioes.filter(r=>r.gcalId).map(r=>r.gcalId));
+  const nReunioes = reunioes.filter(r=>isHojeData(r.data)).length + gcalEventos.filter(e=>isHojeData(e.data)&&!localGcalIds.has(e.gcalId)).length;
+  const p=[];
+  if(nReunioes) p.push(`${nReunioes} reunião${nReunioes>1?'ões':''}`);
+  if(nTarefas)  p.push(`${nTarefas} tarefa${nTarefas>1?'s':''}`);
+  document.getElementById('daySummary').innerHTML = p.length ? `Hoje: <strong>${p.join(' · ')}</strong>` : 'Nada agendado para hoje.';
+  document.getElementById('badgeHoje').textContent = nReunioes + nTarefas;
 }
+
+function renderHoje() { renderReunioes(); renderTarefas(); renderHeader(); }
 
 // ─── TABS ─────────────────────────────────────────────────────────────────
 function switchTab(tab, el) {
@@ -353,58 +515,51 @@ function switchTab(tab, el) {
   document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
   el.classList.add('active');
   document.getElementById('view-'+tab).classList.add('active');
-  if (tab === 'assistente') iniciarFluxo();
+  if (tab==='assistente') iniciarFluxo();
 }
 
 // ─── FLUXO URA ────────────────────────────────────────────────────────────
 function addMsg(role, html, extra='') {
-  const wrap = document.getElementById('chatWrap');
-  const div = document.createElement('div');
-  div.className = `msg ${role} ${extra}`;
-  if (role === 'ai' || role === 'success') {
-    div.innerHTML = `<div class="mlabel">${role==='success'?'Confirmado':'Assistente'}</div>${html}`;
-  } else {
-    div.innerHTML = html;
-  }
+  const wrap=document.getElementById('chatWrap');
+  const div=document.createElement('div');
+  div.className=`msg ${role} ${extra}`;
+  div.innerHTML=role==='user'?html:`<div class="mlabel">${extra==='success'?'Confirmado':'Assistente'}</div>${html}`;
   wrap.appendChild(div);
-  setTimeout(()=>wrap.scrollTop=wrap.scrollHeight, 50);
-  return div;
+  setTimeout(()=>wrap.scrollTop=wrap.scrollHeight,50);
 }
 
 function addOpcoes(opcoes, gridClass='') {
-  const wrap = document.getElementById('chatWrap');
-  const div = document.createElement('div');
-  div.className = `opt-grid ${gridClass}`;
-  div.id = 'opcoes-atual';
-  opcoes.forEach(op => {
-    const btn = document.createElement('button');
-    btn.className = `opt-btn${op.wide?' wide':''}`;
-    btn.innerHTML = op.num ? `<span class="opt-num">${op.num}</span>${op.label}` : op.label;
-    btn.onclick = op.fn;
+  const wrap=document.getElementById('chatWrap');
+  const div=document.createElement('div');
+  div.className=`opt-grid ${gridClass}`;
+  div.id='opcoes-atual';
+  opcoes.forEach(op=>{
+    const btn=document.createElement('button');
+    btn.className=`opt-btn${op.wide?' wide':''}`;
+    btn.innerHTML=op.num?`<span class="opt-num">${op.num}</span>${op.label}`:op.label;
+    btn.onclick=op.fn;
     div.appendChild(btn);
   });
   wrap.appendChild(div);
-  setTimeout(()=>wrap.scrollTop=wrap.scrollHeight, 50);
+  setTimeout(()=>wrap.scrollTop=wrap.scrollHeight,50);
 }
 
 function addInputLivre(placeholder, fn) {
-  const wrap = document.getElementById('chatWrap');
-  const div = document.createElement('div');
-  div.className = 'free-input-wrap';
-  div.id = 'input-livre';
-  div.innerHTML = `<input class="free-input" id="freeField" placeholder="${placeholder}" /><button class="free-send" onclick="confirmarLivre()">OK</button>`;
+  const wrap=document.getElementById('chatWrap');
+  const div=document.createElement('div');
+  div.className='free-input-wrap'; div.id='input-livre';
+  div.innerHTML=`<input class="free-input" id="freeField" placeholder="${placeholder}"/><button class="free-send" onclick="confirmarLivre()">OK</button>`;
   wrap.appendChild(div);
-  setTimeout(()=>{ document.getElementById('freeField')?.focus(); wrap.scrollTop=wrap.scrollHeight; }, 100);
-  window._freeInputFn = fn;
-  document.getElementById('freeField').onkeydown = e => { if(e.key==='Enter') confirmarLivre(); };
+  window._freeInputFn=fn;
+  setTimeout(()=>{ document.getElementById('freeField')?.focus(); wrap.scrollTop=wrap.scrollHeight; },100);
+  document.getElementById('freeField').onkeydown=e=>{ if(e.key==='Enter') confirmarLivre(); };
 }
 
 function confirmarLivre() {
-  const val = document.getElementById('freeField')?.value?.trim();
-  if (!val) return;
+  const val=document.getElementById('freeField')?.value?.trim();
   document.getElementById('input-livre')?.remove();
-  addMsg('user', val);
-  if (window._freeInputFn) window._freeInputFn(val);
+  if(val) addMsg('user',val);
+  if(window._freeInputFn) window._freeInputFn(val||'');
 }
 
 function limparOpcoes() {
@@ -413,83 +568,52 @@ function limparOpcoes() {
 }
 
 function iniciarFluxo() {
-  fluxo = { etapa: 'menu', tipo: null, contato: null, data: null, hora: null, assunto: null };
-  document.getElementById('chatWrap').innerHTML = '';
-  document.getElementById('inputHint').textContent = 'Selecione uma opção';
-
-  addMsg('ai', 'O que deseja fazer?');
+  fluxo={};
+  document.getElementById('chatWrap').innerHTML='';
+  addMsg('ai','O que deseja fazer?');
   addOpcoes([
-    { num:'1', label:'📅 Reunião',        fn: ()=>escolherTipo('reuniao') },
-    { num:'2', label:'✅ Tarefa',          fn: ()=>escolherTipo('tarefa') },
-    { num:'3', label:'🔔 Lembrete',        fn: ()=>escolherTipo('lembrete') },
-    { num:'4', label:'🔄 Follow-up',       fn: ()=>escolherTipo('followup') },
-    { num:'5', label:'📋 Ver agenda hoje', fn: ()=>verAgenda(), wide: true },
+    { num:'1', label:'📅 Reunião',          fn:()=>iniciarReuniao() },
+    { num:'2', label:'✅ Tarefa',            fn:()=>iniciarTarefa() },
+    { num:'3', label:'📋 Ver agenda hoje',   fn:()=>verAgenda(), wide:true },
   ]);
 }
 
-function escolherTipo(tipo) {
-  limparOpcoes();
-  fluxo.tipo = tipo;
-  addMsg('user', tipoLabel(tipo));
-
-  if (tipo === 'reuniao') {
-    addMsg('ai', 'Com quem é a reunião?');
-    addInputLivre('Nome do contato ou empresa', (val) => {
-      fluxo.contato = val;
-      perguntarData();
-    });
-  } else if (tipo === 'tarefa') {
-    addMsg('ai', 'Qual é a tarefa?');
-    addInputLivre('Descreva a tarefa', (val) => {
-      fluxo.assunto = val;
-      perguntarData();
-    });
-  } else if (tipo === 'lembrete') {
-    addMsg('ai', 'Do que precisa ser lembrado?');
-    addInputLivre('Ex: ligar pro João, enviar proposta...', (val) => {
-      fluxo.assunto = val;
-      perguntarData();
-    });
-  } else if (tipo === 'followup') {
-    addMsg('ai', 'Follow-up com quem?');
-    addInputLivre('Nome do contato ou cliente', (val) => {
-      fluxo.contato = val;
-      perguntarData();
-    });
-  }
+// FLUXO REUNIÃO
+function iniciarReuniao() {
+  limparOpcoes(); fluxo={tipo:'reuniao'};
+  addMsg('user','Reunião');
+  addMsg('ai','Com quem é a reunião?');
+  addInputLivre('Nome do contato ou empresa', val=>{ fluxo.contato=val; perguntarData(); });
 }
 
 function perguntarData() {
-  addMsg('ai', 'Quando?');
+  addMsg('ai','Quando?');
   addOpcoes([
-    { label: 'Hoje',   fn: ()=>escolherData(hojeStr(),'Hoje') },
-    { label: 'Amanhã', fn: ()=>escolherData(amanhaStr(),'Amanhã') },
-    { label: 'Esta semana', fn: ()=>perguntarDiaSemana(), wide: true },
+    { label:'Hoje',        fn:()=>escolherData(hojeStr(),'Hoje') },
+    { label:'Amanhã',      fn:()=>escolherData(amanhaStr(),'Amanhã') },
+    { label:'Esta semana', fn:()=>perguntarDiaSemana(), wide:true },
   ]);
 }
 
 function perguntarDiaSemana() {
-  limparOpcoes();
-  addMsg('user', 'Esta semana');
-  addMsg('ai', 'Qual dia?');
+  limparOpcoes(); addMsg('user','Esta semana');
+  addMsg('ai','Qual dia?');
   addOpcoes([
     { label:'Seg', fn:()=>escolherData(proxDia('seg'),'Segunda') },
     { label:'Ter', fn:()=>escolherData(proxDia('ter'),'Terça') },
     { label:'Qua', fn:()=>escolherData(proxDia('qua'),'Quarta') },
     { label:'Qui', fn:()=>escolherData(proxDia('qui'),'Quinta') },
     { label:'Sex', fn:()=>escolherData(proxDia('sex'),'Sexta') },
-  ], 'three');
+  ],'three');
 }
 
-function escolherData(dataStr, label) {
-  limparOpcoes();
-  fluxo.data = dataStr;
-  addMsg('user', label);
-  perguntarHora();
+function escolherData(ds, label) {
+  limparOpcoes(); fluxo.data=ds;
+  addMsg('user',label); perguntarHora();
 }
 
 function perguntarHora() {
-  addMsg('ai', 'Qual horário?');
+  addMsg('ai','Qual horário?');
   addOpcoes([
     { label:'08:00', fn:()=>escolherHora('08:00') },
     { label:'09:00', fn:()=>escolherHora('09:00') },
@@ -500,113 +624,98 @@ function perguntarHora() {
     { label:'16:00', fn:()=>escolherHora('16:00') },
     { label:'17:00', fn:()=>escolherHora('17:00') },
     { label:'18:00', fn:()=>escolherHora('18:00') },
-    { label:'Outro horário', fn:()=>horarioLivre(), wide:true },
+    { label:'Outro', fn:()=>horarioLivre(), wide:true },
   ]);
 }
 
-function escolherHora(hora) {
-  limparOpcoes();
-  fluxo.hora = hora;
-  addMsg('user', hora);
-  perguntarAssunto();
+function escolherHora(h) {
+  limparOpcoes(); fluxo.hora=h;
+  addMsg('user',h); perguntarAssunto();
 }
 
 function horarioLivre() {
-  limparOpcoes();
-  addMsg('user', 'Outro horário');
-  addMsg('ai', 'Digite o horário:');
-  addInputLivre('Ex: 13:30', (val) => {
-    const m = val.match(/(\d{1,2})[h:](\d{2})?/);
-    if (m) {
-      fluxo.hora = `${String(parseInt(m[1])).padStart(2,'0')}:${m[2]||'00'}`;
-    } else {
-      fluxo.hora = val;
-    }
+  limparOpcoes(); addMsg('user','Outro horário');
+  addMsg('ai','Digite o horário:');
+  addInputLivre('Ex: 13:30', val=>{
+    const m=val.match(/(\d{1,2})[h:](\d{2})?/);
+    fluxo.hora = m ? `${String(parseInt(m[1])).padStart(2,'0')}:${m[2]||'00'}` : val;
     perguntarAssunto();
   });
 }
 
 function perguntarAssunto() {
-  // Se já tem assunto (tarefa/lembrete), pula
-  if (fluxo.assunto) { confirmarItem(); return; }
-
-  addMsg('ai', fluxo.tipo === 'reuniao' ? 'Assunto da reunião?' : 'Mais detalhes? (opcional)');
-  addInputLivre(
-    fluxo.tipo === 'reuniao' ? 'Ex: apresentação de proposta, renovação...' : 'Deixe em branco para pular',
-    (val) => { fluxo.assunto = val || null; confirmarItem(); }
-  );
+  addMsg('ai','Assunto da reunião?');
+  addInputLivre('Ex: apresentação de proposta, renovação...', val=>{ fluxo.assunto=val||null; confirmarReuniao(); });
 }
 
-async function confirmarItem() {
+async function confirmarReuniao() {
   limparOpcoes();
-
-  // Montar título
-  let titulo = '';
-  if (fluxo.tipo === 'reuniao') titulo = `Reunião${fluxo.contato?' com '+fluxo.contato:''}${fluxo.assunto?' — '+fluxo.assunto:''}`;
-  else if (fluxo.tipo === 'tarefa') titulo = fluxo.assunto || 'Tarefa';
-  else if (fluxo.tipo === 'lembrete') titulo = fluxo.assunto || 'Lembrete';
-  else if (fluxo.tipo === 'followup') titulo = `Follow-up${fluxo.contato?' — '+fluxo.contato:''}`;
-
-  const item = {
-    id: Date.now().toString(),
-    titulo,
-    tipo: fluxo.tipo,
-    data: fluxo.data,
-    hora: fluxo.hora || 'sem hora',
-    contato: fluxo.contato,
-    assunto: fluxo.assunto,
-    criadoEm: new Date().toISOString(),
-    gcalId: null
-  };
+  const titulo = `Reunião${fluxo.contato?' com '+fluxo.contato:''}${fluxo.assunto?' — '+fluxo.assunto:''}`;
+  const item = { id:Date.now().toString(), titulo, data:fluxo.data, hora:fluxo.hora||'sem hora', contato:fluxo.contato, assunto:fluxo.assunto, gcalId:null };
 
   if (isSignedIn) {
     const gcalId = await createGCal(item);
-    if (gcalId) item.gcalId = gcalId;
+    if (gcalId) item.gcalId=gcalId;
   }
 
-  agenda.push(item); save(); renderAll();
+  reunioes.push(item); saveJSON(SK_REUNIOES, reunioes);
+  renderHoje(); renderSemana();
 
-  const dataFmt = fmtDate(item.data);
-  const temHora = item.hora && item.hora !== 'sem hora';
-  const gcalMsg = item.gcalId ? '<br>✓ Salvo no Google Calendar — lembrete 30 min antes.' : '';
+  const gcalMsg = item.gcalId ? '<br>✓ Salvo no Google Calendar — lembrete 30 min antes.' : (!isSignedIn?'<br>Faça login para salvar no Google Calendar.':'');
+  addMsg('ai', `<b>${titulo}</b><br>${fmtDate(item.data)} às ${item.hora}${gcalMsg}`, 'success');
 
-  addMsg('success',
-    `<b>${titulo}</b><br>${dataFmt}${temHora?' às '+item.hora:''}${gcalMsg}`
-  );
-
-  // Opções após confirmar
   setTimeout(()=>{
     addOpcoes([
-      { label:'+ Adicionar outro', fn:()=>iniciarFluxo(), wide:true },
-      { label:'Ver agenda de hoje', fn:()=>verAgenda(), wide:true },
-    ], 'single');
-  }, 400);
+      { label:'+ Adicionar outra reunião', fn:()=>iniciarFluxo(), wide:true },
+      { label:'Ver agenda de hoje',        fn:()=>verAgenda(),    wide:true },
+    ],'single');
+  },400);
 }
 
+// FLUXO TAREFA
+function iniciarTarefa() {
+  limparOpcoes();
+  addMsg('user','Tarefa');
+  addMsg('ai','Qual é a tarefa?');
+  addInputLivre('Descreva a tarefa...', val=>{
+    if (!val) { iniciarFluxo(); return; }
+    tarefas.push({ id:Date.now().toString(), texto:val, data:hojeStr(), status:'pendente', migrada:false });
+    saveJSON(SK_TAREFAS, tarefas);
+    renderHoje();
+    addMsg('ai',`Tarefa adicionada: <b>${val}</b><br>Aparece na lista do dia na aba Hoje.`,'success');
+    setTimeout(()=>{
+      addOpcoes([
+        { label:'+ Outra tarefa',        fn:()=>iniciarTarefa(), wide:true },
+        { label:'+ Reunião',             fn:()=>iniciarReuniao(), wide:true },
+        { label:'Ver agenda de hoje',    fn:()=>verAgenda(), wide:true },
+      ],'single');
+    },400);
+  });
+}
+
+// VER AGENDA
 function verAgenda() {
   limparOpcoes();
-  const itens = agenda.filter(i=>isHoje(i)).sort((a,b)=>{
-    if(!a.hora||a.hora==='sem hora') return 1;
-    if(!b.hora||b.hora==='sem hora') return -1;
-    return a.hora.localeCompare(b.hora);
-  });
+  const hoje = hojeStr();
+  const localGcalIds = new Set(reunioes.filter(r=>r.gcalId).map(r=>r.gcalId));
+  const gcalHoje = gcalEventos.filter(e=>isHojeData(e.data)&&!localGcalIds.has(e.gcalId));
+  const todasR = [...reunioes.filter(r=>isHojeData(r.data)),...gcalHoje].sort((a,b)=>{ if(!a.hora||a.hora==='sem hora') return 1; if(!b.hora||b.hora==='sem hora') return -1; return a.hora.localeCompare(b.hora); });
+  const tarefasHoje = tarefas.filter(t=>t.data===hoje&&t.status==='pendente');
 
-  if (!itens.length) {
-    addMsg('ai', 'Nada agendado para hoje.');
-  } else {
-    const lista = itens.map(i=>{
-      const h = i.hora&&i.hora!=='sem hora'?`<span style="color:var(--gold);font-family:'DM Mono',monospace">${i.hora}</span> — `:'';
-      const sub = [i.contato, i.assunto].filter(Boolean).join(' · ');
-      return `${h}<b>${i.titulo}</b>${sub?`<br><span style="font-size:11px;opacity:0.6">${sub}</span>`:''}`;
-    }).join('<br><br>');
-    addMsg('ai', `Sua agenda de hoje:<br><br>${lista}`);
+  let html = '';
+  if (todasR.length) {
+    html += `<b>Reuniões:</b><br>${todasR.map(r=>`• ${r.hora&&r.hora!=='sem hora'?r.hora+' — ':''}<b>${r.titulo}</b>`).join('<br>')}`;
   }
+  if (tarefasHoje.length) {
+    if (html) html += '<br><br>';
+    html += `<b>Tarefas:</b><br>${tarefasHoje.map((t,i)=>`${i+1}. ${t.texto}`).join('<br>')}`;
+  }
+  if (!html) html = 'Nada agendado para hoje.';
 
+  addMsg('ai', html);
   setTimeout(()=>{
-    addOpcoes([
-      { label:'+ Adicionar compromisso', fn:()=>iniciarFluxo(), wide:true },
-    ], 'single');
-  }, 300);
+    addOpcoes([{ label:'+ Adicionar compromisso', fn:()=>iniciarFluxo(), wide:true }],'single');
+  },300);
 }
 </script>
 </body>
