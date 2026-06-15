@@ -1,0 +1,1004 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>CRM — Ocean Life</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #060d18; --surface: #0d1a2d; --surface2: #112240;
+  --border: rgba(201,168,76,0.15); --border-dim: rgba(255,255,255,0.06);
+  --gold: #C9A84C; --gold-light: #E8C97A; --gold-dim: rgba(201,168,76,0.08);
+  --text: #e8eaf0; --muted: #6b7a99;
+  --green: #4CAF82; --green-dim: rgba(76,175,130,0.1);
+  --red: #e07070; --red-dim: rgba(224,112,112,0.1);
+  --blue: #5b9cf6; --blue-dim: rgba(91,156,246,0.1);
+}
+body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+
+/* LAYOUT */
+.app { display: flex; height: 100vh; overflow: hidden; }
+
+/* SIDEBAR */
+.sidebar { width: 220px; flex-shrink: 0; background: var(--surface); border-right: 1px solid var(--border-dim); display: flex; flex-direction: column; padding: 24px 0; }
+.sidebar-brand { padding: 0 20px 24px; border-bottom: 1px solid var(--border-dim); margin-bottom: 16px; }
+.sidebar-brand .logo { font-family: 'Playfair Display', serif; font-size: 16px; color: var(--gold); }
+.sidebar-brand .sub { font-size: 10px; color: var(--muted); letter-spacing: 1.5px; text-transform: uppercase; margin-top: 2px; }
+.nav-item { display: flex; align-items: center; gap: 10px; padding: 10px 20px; font-size: 13px; color: var(--muted); cursor: pointer; transition: all 0.2s; border-left: 2px solid transparent; }
+.nav-item:hover { color: var(--text); background: rgba(255,255,255,0.03); }
+.nav-item.active { color: var(--gold); border-left-color: var(--gold); background: var(--gold-dim); }
+.nav-item .nav-icon { font-size: 15px; width: 20px; text-align: center; }
+.sidebar-footer { margin-top: auto; padding: 16px 20px; border-top: 1px solid var(--border-dim); }
+.user-info { font-size: 11px; color: var(--muted); }
+.user-name { font-size: 12px; color: var(--text); font-weight: 500; margin-bottom: 2px; }
+.sync-row { display: flex; align-items: center; gap: 8px; margin-top: 8px; }
+.sync-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); }
+.sync-btn { font-size: 10px; color: var(--muted); background: none; border: 1px solid var(--border-dim); border-radius: 4px; padding: 2px 8px; cursor: pointer; }
+.sync-btn:hover { border-color: var(--gold); color: var(--gold); }
+.logout-btn { font-size: 11px; color: var(--muted); background: none; border: none; cursor: pointer; text-decoration: underline; margin-top: 6px; display: block; }
+
+/* MAIN */
+.main { flex: 1; overflow-y: auto; display: flex; flex-direction: column; }
+.page { display: none; flex-direction: column; height: 100%; }
+.page.active { display: flex; }
+
+/* PAGE HEADER */
+.page-header { padding: 24px 28px 20px; border-bottom: 1px solid var(--border-dim); display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; }
+.page-title { font-family: 'Playfair Display', serif; font-size: 20px; color: var(--gold); }
+.page-sub { font-size: 12px; color: var(--muted); margin-top: 3px; }
+.btn-primary { padding: 9px 18px; background: var(--gold); color: #060d18; border: none; border-radius: 6px; font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 600; cursor: pointer; transition: background 0.2s; white-space: nowrap; }
+.btn-primary:hover { background: var(--gold-light); }
+.btn-ghost { padding: 9px 18px; background: transparent; color: var(--muted); border: 1px solid var(--border-dim); border-radius: 6px; font-family: 'DM Sans', sans-serif; font-size: 13px; cursor: pointer; transition: all 0.2s; }
+.btn-ghost:hover { border-color: var(--border); color: var(--text); }
+
+/* PAGE CONTENT */
+.page-content { padding: 24px 28px; flex: 1; overflow-y: auto; }
+
+/* STATS */
+.stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 24px; }
+.stat-card { background: var(--surface); border: 1px solid var(--border-dim); border-radius: 8px; padding: 16px 18px; }
+.stat-label { font-size: 10px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; }
+.stat-value { font-family: 'DM Mono', monospace; font-size: 22px; color: var(--text); font-weight: 500; }
+.stat-value.gold { color: var(--gold); }
+.stat-value.green { color: var(--green); }
+.stat-note { font-size: 11px; color: var(--muted); margin-top: 4px; }
+
+/* TABLE */
+.table-wrap { background: var(--surface); border: 1px solid var(--border-dim); border-radius: 8px; overflow: hidden; }
+.table-header { display: flex; align-items: center; justify-content: space-between; padding: 14px 18px; border-bottom: 1px solid var(--border-dim); }
+.table-title { font-size: 12px; font-weight: 600; color: var(--text); }
+.search-input { background: var(--bg); border: 1px solid var(--border-dim); border-radius: 6px; padding: 7px 12px; font-family: 'DM Sans', sans-serif; font-size: 12px; color: var(--text); outline: none; width: 200px; transition: border-color 0.2s; }
+.search-input:focus { border-color: var(--border); }
+.search-input::placeholder { color: var(--muted); }
+table { width: 100%; border-collapse: collapse; }
+thead th { font-size: 10px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: var(--muted); padding: 10px 14px; text-align: left; border-bottom: 1px solid var(--border-dim); white-space: nowrap; }
+tbody tr { border-bottom: 1px solid rgba(255,255,255,0.03); transition: background 0.15s; }
+tbody tr:hover { background: rgba(255,255,255,0.02); }
+tbody tr:last-child { border-bottom: none; }
+tbody td { font-size: 12px; color: var(--text); padding: 11px 14px; }
+td.mono { font-family: 'DM Mono', monospace; font-size: 11px; }
+td.gold { color: var(--gold); font-family: 'DM Mono', monospace; font-size: 11px; }
+td.green { color: var(--green); font-family: 'DM Mono', monospace; font-size: 11px; }
+td.muted { color: var(--muted); }
+.badge { display: inline-flex; align-items: center; padding: 2px 8px; border-radius: 3px; font-size: 10px; font-weight: 600; }
+.badge-seg  { background: var(--blue-dim); color: var(--blue); }
+.badge-cons { background: var(--gold-dim); color: var(--gold); }
+.badge-ativo { background: var(--green-dim); color: var(--green); }
+.badge-inativo { background: var(--red-dim); color: var(--red); }
+.row-actions { display: flex; gap: 6px; }
+.act-btn { font-size: 11px; padding: 3px 8px; border-radius: 4px; border: 1px solid var(--border-dim); background: none; color: var(--muted); cursor: pointer; transition: all 0.2s; white-space: nowrap; }
+.act-btn:hover { border-color: var(--gold); color: var(--gold); }
+.act-btn.danger:hover { border-color: var(--red); color: var(--red); }
+
+/* EMPTY */
+.empty-table { text-align: center; padding: 48px; color: var(--muted); font-size: 13px; }
+.empty-icon { font-size: 28px; margin-bottom: 10px; }
+
+/* MODAL */
+.modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 100; display: none; align-items: center; justify-content: center; padding: 20px; }
+.modal-overlay.open { display: flex; }
+.modal { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; width: 100%; max-width: 560px; max-height: 90vh; overflow-y: auto; }
+.modal-header { padding: 20px 24px; border-bottom: 1px solid var(--border-dim); display: flex; align-items: center; justify-content: space-between; }
+.modal-title { font-size: 15px; font-weight: 600; color: var(--text); }
+.modal-close { background: none; border: none; color: var(--muted); font-size: 20px; cursor: pointer; line-height: 1; }
+.modal-body { padding: 24px; }
+.modal-footer { padding: 16px 24px; border-top: 1px solid var(--border-dim); display: flex; gap: 10px; justify-content: flex-end; }
+
+/* FORM */
+.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.form-grid.single { grid-template-columns: 1fr; }
+.form-group { display: flex; flex-direction: column; gap: 6px; }
+.form-group.span2 { grid-column: 1 / -1; }
+.form-label { font-size: 11px; font-weight: 500; color: var(--muted); letter-spacing: 0.8px; text-transform: uppercase; }
+.form-input, .form-select { background: var(--bg); border: 1px solid var(--border-dim); border-radius: 6px; padding: 9px 12px; font-family: 'DM Mono', monospace; font-size: 13px; color: var(--text); outline: none; transition: border-color 0.2s; width: 100%; appearance: none; }
+.form-input:focus, .form-select:focus { border-color: var(--gold); }
+.form-input::placeholder { color: var(--muted); font-size: 12px; font-family: 'DM Sans', sans-serif; }
+.form-select option { background: var(--surface); }
+.form-divider { grid-column: 1 / -1; height: 1px; background: var(--border-dim); margin: 4px 0; }
+.form-section-label { grid-column: 1 / -1; font-size: 10px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); padding-bottom: 4px; }
+
+/* AUTH */
+.auth-screen { display: flex; align-items: center; justify-content: center; height: 100vh; }
+.auth-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 40px; text-align: center; max-width: 400px; width: 100%; }
+.auth-logo { font-family: 'Playfair Display', serif; font-size: 28px; color: var(--gold); margin-bottom: 8px; }
+.auth-sub { font-size: 12px; color: var(--muted); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 24px; }
+.auth-desc { font-size: 13px; color: var(--muted); line-height: 1.6; margin-bottom: 24px; }
+.google-btn { display: inline-flex; align-items: center; gap: 10px; background: white; color: #333; border: none; border-radius: 6px; padding: 12px 20px; font-size: 14px; font-weight: 500; cursor: pointer; }
+.google-btn svg { width: 18px; height: 18px; }
+
+/* EXTRATO */
+.extrato-header { display: flex; gap: 12px; margin-bottom: 20px; flex-wrap: wrap; }
+.filter-select { background: var(--bg); border: 1px solid var(--border-dim); border-radius: 6px; padding: 8px 12px; font-family: 'DM Sans', sans-serif; font-size: 13px; color: var(--text); outline: none; appearance: none; cursor: pointer; }
+.filter-select:focus { border-color: var(--gold); }
+.filter-select option { background: var(--surface); }
+.extrato-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
+.extrato-top { padding: 20px 24px; border-bottom: 1px solid var(--border-dim); display: flex; justify-content: space-between; align-items: flex-start; }
+.extrato-parceiro { font-size: 18px; font-weight: 600; color: var(--text); }
+.extrato-periodo { font-size: 12px; color: var(--muted); margin-top: 4px; }
+.extrato-total-box { text-align: right; }
+.extrato-total-label { font-size: 10px; color: var(--muted); letter-spacing: 1px; text-transform: uppercase; }
+.extrato-total-val { font-family: 'Playfair Display', serif; font-size: 28px; color: var(--green); margin-top: 4px; }
+
+/* LOADING */
+.loading { text-align: center; padding: 60px; color: var(--muted); }
+
+/* MOBILE */
+@media (max-width: 768px) {
+  .sidebar { display: none; }
+  .stats-grid { grid-template-columns: 1fr 1fr; }
+  .form-grid { grid-template-columns: 1fr; }
+  .page-header { padding: 16px; }
+  .page-content { padding: 16px; }
+}
+</style>
+</head>
+<body>
+
+<!-- AUTH -->
+<div id="authScreen" class="auth-screen">
+  <div class="auth-card">
+    <div class="auth-logo">Ocean Life</div>
+    <div class="auth-sub">CRM · Seguros & Consórcio</div>
+    <div class="auth-desc">Gestão de apólices, comissões e repasses para parceiros.</div>
+    <button class="google-btn" onclick="signIn()">
+      <svg viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+      Entrar com Google
+    </button>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="appMain" class="app" style="display:none">
+
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div class="sidebar-brand">
+      <div class="logo">Ocean Life</div>
+      <div class="sub">CRM</div>
+    </div>
+    <div class="nav-item active" onclick="goTo('dashboard')"><span class="nav-icon">📊</span> Dashboard</div>
+    <div class="nav-item" onclick="goTo('apolices')"><span class="nav-icon">📋</span> Apólices</div>
+    <div class="nav-item" onclick="goTo('pagamentos')"><span class="nav-icon">💰</span> Pagamentos</div>
+    <div class="nav-item" onclick="goTo('parceiros')"><span class="nav-icon">🤝</span> Parceiros</div>
+    <div class="nav-item" onclick="goTo('extrato')"><span class="nav-icon">📄</span> Extrato</div>
+    <div class="sidebar-footer">
+      <div class="user-name" id="sidebarUser">—</div>
+      <div class="sync-row">
+        <div class="sync-dot"></div>
+        <span style="font-size:11px;color:var(--green)">Sincronizado</span>
+        <button class="sync-btn" onclick="sincronizar()">↻</button>
+      </div>
+      <button class="logout-btn" onclick="signOut()">Sair</button>
+    </div>
+  </div>
+
+  <!-- MAIN -->
+  <div class="main">
+
+    <!-- DASHBOARD -->
+    <div class="page active" id="page-dashboard">
+      <div class="page-header">
+        <div><div class="page-title">Dashboard</div><div class="page-sub" id="dashDate">—</div></div>
+      </div>
+      <div class="page-content">
+        <div class="stats-grid" id="dashStats">
+          <div class="stat-card"><div class="stat-label">Apólices ativas</div><div class="stat-value" id="statApolices">—</div></div>
+          <div class="stat-card"><div class="stat-label">Parceiros</div><div class="stat-value" id="statParceiros">—</div></div>
+          <div class="stat-card"><div class="stat-label">Comissão recebida</div><div class="stat-value gold" id="statComissao">—</div></div>
+          <div class="stat-card"><div class="stat-label">Repasse pendente</div><div class="stat-value green" id="statRepasse">—</div></div>
+        </div>
+        <div class="table-wrap">
+          <div class="table-header"><div class="table-title">Últimos pagamentos registrados</div></div>
+          <div id="dashPagamentos"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- APÓLICES -->
+    <div class="page" id="page-apolices">
+      <div class="page-header">
+        <div><div class="page-title">Apólices</div><div class="page-sub">Cadastro de apólices ativas e inativas</div></div>
+        <button class="btn-primary" onclick="abrirModalApolice()">+ Nova apólice</button>
+      </div>
+      <div class="page-content">
+        <div class="table-wrap">
+          <div class="table-header">
+            <div class="table-title">Todas as apólices</div>
+            <input class="search-input" placeholder="Buscar cliente, produto..." oninput="filtrarApolices(this.value)">
+          </div>
+          <div style="overflow-x:auto">
+            <table>
+              <thead>
+                <tr>
+                  <th>Cliente</th>
+                  <th>Produto</th>
+                  <th>Seguradora</th>
+                  <th>Prêmio líq.</th>
+                  <th>Comissão</th>
+                  <th>Parceiro</th>
+                  <th>Vigência</th>
+                  <th>Status</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody id="tabelaApolices"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PAGAMENTOS -->
+    <div class="page" id="page-pagamentos">
+      <div class="page-header">
+        <div><div class="page-title">Pagamentos</div><div class="page-sub">Registro de comissões recebidas por apólice</div></div>
+        <button class="btn-primary" onclick="abrirModalPagamento()">+ Registrar pagamento</button>
+      </div>
+      <div class="page-content">
+        <div class="table-wrap">
+          <div class="table-header"><div class="table-title">Histórico de pagamentos</div></div>
+          <div style="overflow-x:auto">
+            <table>
+              <thead>
+                <tr>
+                  <th>Data</th>
+                  <th>Cliente / Apólice</th>
+                  <th>Parcela</th>
+                  <th>Comissão bruta</th>
+                  <th>Imposto</th>
+                  <th>Comissão líq.</th>
+                  <th>Parceiro</th>
+                  <th>Repasse</th>
+                  <th>Status</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody id="tabelaPagamentos"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PARCEIROS -->
+    <div class="page" id="page-parceiros">
+      <div class="page-header">
+        <div><div class="page-title">Parceiros</div><div class="page-sub">Consultores e distribuidores</div></div>
+        <button class="btn-primary" onclick="abrirModalParceiro()">+ Novo parceiro</button>
+      </div>
+      <div class="page-content">
+        <div class="table-wrap">
+          <div class="table-header"><div class="table-title">Todos os parceiros</div></div>
+          <table>
+            <thead><tr><th>Nome / Código</th><th>% Repasse</th><th>Apólices</th><th>Repasse total</th><th>Repasse pendente</th><th></th></tr></thead>
+            <tbody id="tabelaParceiros"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- EXTRATO -->
+    <div class="page" id="page-extrato">
+      <div class="page-header">
+        <div><div class="page-title">Extrato de Repasse</div><div class="page-sub">Gere e exporte extratos por parceiro</div></div>
+        <button class="btn-primary" onclick="exportarExtrato()">⬇ Exportar PDF</button>
+      </div>
+      <div class="page-content">
+        <div class="extrato-header">
+          <select class="filter-select" id="extratoFiltroParc" onchange="renderExtrato()">
+            <option value="">Selecione o parceiro</option>
+          </select>
+          <select class="filter-select" id="extratoFiltroPeriodo" onchange="renderExtrato()">
+            <option value="todos">Todo o período</option>
+            <option value="mes">Este mês</option>
+            <option value="trim">Este trimestre</option>
+            <option value="ano">Este ano</option>
+          </select>
+          <select class="filter-select" id="extratoFiltroStatus" onchange="renderExtrato()">
+            <option value="todos">Todos os status</option>
+            <option value="pendente">Pendentes</option>
+            <option value="pago">Pagos</option>
+          </select>
+        </div>
+        <div id="extratoConteudo"></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- MODAL APÓLICE -->
+<div class="modal-overlay" id="modalApolice">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="modalApoliceTitle">Nova apólice</div>
+      <button class="modal-close" onclick="fecharModal('modalApolice')">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-grid">
+        <div class="form-group span2"><div class="form-label">Cliente</div><input class="form-input" id="fCliente" placeholder="Nome completo do cliente"></div>
+        <div class="form-group"><div class="form-label">Produto</div>
+          <select class="form-select" id="fProduto">
+            <option value="">Selecione</option>
+            <option>Vida</option><option>RCP</option><option>Residencial</option><option>Auto</option>
+            <option>Empresarial</option><option>D&O</option><option>Cyber</option><option>Garantia</option>
+            <option>Viagem</option><option>DIT</option><option>Invalidez</option><option>Doenças Graves</option>
+            <option>Saúde PF</option><option>Saúde PJ</option><option>Consórcio Imóvel</option>
+            <option>Consórcio Auto</option><option>Consórcio Serviços</option><option>Outros</option>
+          </select>
+        </div>
+        <div class="form-group"><div class="form-label">Tipo</div>
+          <select class="form-select" id="fTipo">
+            <option value="seguro">Seguro</option>
+            <option value="consorcio">Consórcio</option>
+          </select>
+        </div>
+        <div class="form-group span2"><div class="form-label">Seguradora / Administradora</div><input class="form-input" id="fSeguradora" placeholder="Ex: Tokio Marine, Banco do Brasil..."></div>
+        <div class="form-group"><div class="form-label">Prêmio líquido (R$)</div><input class="form-input" id="fPremio" type="number" step="0.01" placeholder="0,00"></div>
+        <div class="form-group"><div class="form-label">Comissão (%)</div><input class="form-input" id="fComissaoPct" type="number" step="0.1" placeholder="20"></div>
+        <div class="form-group"><div class="form-label">Imposto (%)</div><input class="form-input" id="fImpostoPct" type="number" step="0.1" placeholder="16" value="16"></div>
+        <div class="form-group"><div class="form-label">Qtd. parcelas</div><input class="form-input" id="fParcelas" type="number" placeholder="12"></div>
+        <div class="form-group"><div class="form-label">Início de vigência</div><input class="form-input" id="fInicio" type="date"></div>
+        <div class="form-group"><div class="form-label">Renovação</div><input class="form-input" id="fRenovacao" type="date"></div>
+        <div class="form-divider"></div>
+        <div class="form-section-label">Parceiro</div>
+        <div class="form-group"><div class="form-label">Parceiro</div>
+          <select class="form-select" id="fParceiro">
+            <option value="">Nenhum</option>
+          </select>
+        </div>
+        <div class="form-group"><div class="form-label">% Repasse (do parceiro)</div><input class="form-input" id="fRepassePct" type="number" step="1" placeholder="50"></div>
+        <div class="form-group span2"><div class="form-label">Observações</div><input class="form-input" id="fObs" placeholder="Notas adicionais..."></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-ghost" onclick="fecharModal('modalApolice')">Cancelar</button>
+      <button class="btn-primary" onclick="salvarApolice()">Salvar apólice</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL PARCEIRO -->
+<div class="modal-overlay" id="modalParceiro">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">Novo parceiro</div>
+      <button class="modal-close" onclick="fecharModal('modalParceiro')">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-grid">
+        <div class="form-group span2"><div class="form-label">Nome / Código</div><input class="form-input" id="pNome" placeholder="Ex: DCAF, João Silva..."></div>
+        <div class="form-group"><div class="form-label">% Repasse padrão</div><input class="form-input" id="pRepasse" type="number" step="1" placeholder="50" value="50"></div>
+        <div class="form-group"><div class="form-label">Tipo</div>
+          <select class="form-select" id="pTipo">
+            <option value="pf">Pessoa Física</option>
+            <option value="pj">Pessoa Jurídica</option>
+          </select>
+        </div>
+        <div class="form-group span2"><div class="form-label">Contato (WhatsApp / Email)</div><input class="form-input" id="pContato" placeholder="(21) 99999-9999 / email@..."></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-ghost" onclick="fecharModal('modalParceiro')">Cancelar</button>
+      <button class="btn-primary" onclick="salvarParceiro()">Salvar parceiro</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL PAGAMENTO -->
+<div class="modal-overlay" id="modalPagamento">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">Registrar pagamento</div>
+      <button class="modal-close" onclick="fecharModal('modalPagamento')">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-grid">
+        <div class="form-group span2"><div class="form-label">Apólice</div>
+          <select class="form-select" id="pgApolice" onchange="preencherDadosPagamento()">
+            <option value="">Selecione a apólice</option>
+          </select>
+        </div>
+        <div class="form-group"><div class="form-label">Data do pagamento</div><input class="form-input" id="pgData" type="date"></div>
+        <div class="form-group"><div class="form-label">Nº da parcela</div><input class="form-input" id="pgParcela" type="number" placeholder="1" min="1"></div>
+        <div class="form-group"><div class="form-label">Comissão bruta (R$)</div><input class="form-input" id="pgBruta" type="number" step="0.01" oninput="calcularPagamento()"></div>
+        <div class="form-group"><div class="form-label">Imposto (%)</div><input class="form-input" id="pgImposto" type="number" step="0.1" value="16" oninput="calcularPagamento()"></div>
+        <div class="form-group"><div class="form-label">Comissão líquida (R$)</div><input class="form-input" id="pgLiquida" type="number" step="0.01" readonly style="opacity:0.7"></div>
+        <div class="form-group"><div class="form-label">% Repasse</div><input class="form-input" id="pgRepassePct" type="number" step="1" oninput="calcularPagamento()"></div>
+        <div class="form-group"><div class="form-label">Repasse ao parceiro (R$)</div><input class="form-input" id="pgRepasseVal" type="number" step="0.01" readonly style="opacity:0.7"></div>
+        <div class="form-group"><div class="form-label">Parceiro</div><input class="form-input" id="pgParceiro" readonly style="opacity:0.7"></div>
+        <div class="form-group"><div class="form-label">Status do repasse</div>
+          <select class="form-select" id="pgStatus">
+            <option value="pendente">Pendente</option>
+            <option value="pago">Pago</option>
+          </select>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-ghost" onclick="fecharModal('modalPagamento')">Cancelar</button>
+      <button class="btn-primary" onclick="salvarPagamento()">Registrar</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const CLIENT_ID = '863893997761-95era6h3airlceot1a94j4fp14ksnp1j.apps.googleusercontent.com';
+const SCOPES = 'https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/drive.appdata';
+const DRIVE_FILE = 'crm_oceanlife.json';
+
+let tokenClient, accessToken = null;
+let db = { apolices: [], parceiros: [], pagamentos: [] };
+let driveFileId = null;
+let saving = false;
+let editandoId = null;
+
+// ─── AUTH ──────────────────────────────────────────────────────────────────
+window.onload = () => {
+  tokenClient = google.accounts.oauth2.initTokenClient({
+    client_id: CLIENT_ID, scope: SCOPES,
+    callback: async (r) => {
+      if (r.error) return;
+      accessToken = r.access_token;
+      localStorage.setItem('crm_tok', accessToken);
+      await init();
+    }
+  });
+  const tok = localStorage.getItem('crm_tok');
+  if (tok) { accessToken = tok; init(); }
+};
+
+function signIn() { tokenClient.requestAccessToken({ prompt: 'consent' }); }
+function signOut() {
+  if (accessToken) google.accounts.oauth2.revoke(accessToken, ()=>{});
+  accessToken = null; localStorage.removeItem('crm_tok');
+  document.getElementById('appMain').style.display = 'none';
+  document.getElementById('authScreen').style.display = 'flex';
+}
+
+async function init() {
+  document.getElementById('authScreen').style.display = 'none';
+  document.getElementById('appMain').style.display = 'flex';
+  fetchUser();
+  await carregarDrive();
+  renderTudo();
+}
+
+async function fetchUser() {
+  try {
+    const r = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', { headers: { Authorization: `Bearer ${accessToken}` } });
+    const d = await r.json();
+    document.getElementById('sidebarUser').textContent = d.name || d.email || 'Bruno';
+  } catch {}
+}
+
+// ─── DRIVE ────────────────────────────────────────────────────────────────
+async function carregarDrive() {
+  try {
+    const s = await fetch(`https://www.googleapis.com/drive/v3/files?spaces=appDataFolder&q=name='${DRIVE_FILE}'&fields=files(id)`, { headers: { Authorization: `Bearer ${accessToken}` } });
+    const sd = await s.json();
+    if (sd.files?.length) {
+      driveFileId = sd.files[0].id;
+      const c = await fetch(`https://www.googleapis.com/drive/v3/files/${driveFileId}?alt=media`, { headers: { Authorization: `Bearer ${accessToken}` } });
+      db = await c.json();
+      if (!db.apolices) db.apolices = [];
+      if (!db.parceiros) db.parceiros = [];
+      if (!db.pagamentos) db.pagamentos = [];
+    } else {
+      await salvarDrive();
+    }
+  } catch(e) { console.error('Drive load:', e); }
+}
+
+async function salvarDrive() {
+  if (saving || !accessToken) return;
+  saving = true;
+  try {
+    const body = JSON.stringify(db);
+    if (driveFileId) {
+      await fetch(`https://www.googleapis.com/upload/drive/v3/files/${driveFileId}?uploadType=media`, {
+        method: 'PATCH', headers: { Authorization: `Bearer ${accessToken}`, 'Content-Type': 'application/json' }, body
+      });
+    } else {
+      const meta = { name: DRIVE_FILE, parents: ['appDataFolder'] };
+      const form = new FormData();
+      form.append('metadata', new Blob([JSON.stringify(meta)], { type: 'application/json' }));
+      form.append('file', new Blob([body], { type: 'application/json' }));
+      const r = await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart', { method: 'POST', headers: { Authorization: `Bearer ${accessToken}` }, body: form });
+      const d = await r.json();
+      driveFileId = d.id;
+    }
+  } catch(e) { console.error('Drive save:', e); }
+  saving = false;
+}
+
+async function sincronizar() {
+  await carregarDrive(); renderTudo();
+}
+
+// ─── UTILS ────────────────────────────────────────────────────────────────
+const fmt = n => n != null ? 'R$ ' + parseFloat(n).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : '—';
+const fmtPct = n => n != null ? parseFloat(n).toFixed(1) + '%' : '—';
+const fmtData = ds => ds ? new Date(ds + 'T12:00:00').toLocaleDateString('pt-BR') : '—';
+const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+
+function getParceiro(id) { return db.parceiros.find(p => p.id === id); }
+function getApolice(id) { return db.apolices.find(a => a.id === id); }
+
+// ─── RENDER GERAL ─────────────────────────────────────────────────────────
+function renderTudo() {
+  document.getElementById('dashDate').textContent = new Date().toLocaleDateString('pt-BR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+  renderDashboard();
+  renderApolices();
+  renderPagamentos();
+  renderParceiros();
+  renderExtrato();
+  popularSelects();
+}
+
+// ─── DASHBOARD ────────────────────────────────────────────────────────────
+function renderDashboard() {
+  const ativas = db.apolices.filter(a => a.status === 'ativo').length;
+  const totalComissao = db.pagamentos.reduce((s, p) => s + (parseFloat(p.bruta) || 0), 0);
+  const totalRepasse = db.pagamentos.filter(p => p.statusRepasse === 'pendente').reduce((s, p) => s + (parseFloat(p.repasseVal) || 0), 0);
+
+  document.getElementById('statApolices').textContent = ativas;
+  document.getElementById('statParceiros').textContent = db.parceiros.length;
+  document.getElementById('statComissao').textContent = fmt(totalComissao);
+  document.getElementById('statRepasse').textContent = fmt(totalRepasse);
+
+  const ultimos = [...db.pagamentos].sort((a, b) => new Date(b.data) - new Date(a.data)).slice(0, 8);
+  const tbody = document.getElementById('dashPagamentos');
+  if (!ultimos.length) {
+    tbody.innerHTML = '<div class="empty-table"><div class="empty-icon">💳</div>Nenhum pagamento registrado ainda.</div>';
+    return;
+  }
+  tbody.innerHTML = `<table><thead><tr><th>Data</th><th>Cliente</th><th>Produto</th><th>Comissão bruta</th><th>Repasse</th><th>Status</th></tr></thead><tbody>
+    ${ultimos.map(p => {
+      const ap = getApolice(p.apoliceId);
+      return `<tr>
+        <td class="mono">${fmtData(p.data)}</td>
+        <td>${ap?.cliente || '—'}</td>
+        <td class="muted">${ap?.produto || '—'}</td>
+        <td class="gold">${fmt(p.bruta)}</td>
+        <td class="green">${fmt(p.repasseVal)}</td>
+        <td><span class="badge ${p.statusRepasse === 'pago' ? 'badge-ativo' : 'badge-inativo'}">${p.statusRepasse === 'pago' ? 'Pago' : 'Pendente'}</span></td>
+      </tr>`;
+    }).join('')}
+  </tbody></table>`;
+}
+
+// ─── APÓLICES ────────────────────────────────────────────────────────────
+function renderApolices(filtro = '') {
+  const lista = db.apolices.filter(a =>
+    !filtro || a.cliente?.toLowerCase().includes(filtro.toLowerCase()) || a.produto?.toLowerCase().includes(filtro.toLowerCase())
+  );
+  const tbody = document.getElementById('tabelaApolices');
+  if (!lista.length) {
+    tbody.innerHTML = '<tr><td colspan="9"><div class="empty-table"><div class="empty-icon">📋</div>Nenhuma apólice cadastrada.</div></td></tr>';
+    return;
+  }
+  tbody.innerHTML = lista.map(a => {
+    const parc = getParceiro(a.parceiroId);
+    return `<tr>
+      <td><b>${a.cliente}</b></td>
+      <td>${a.produto}</td>
+      <td class="muted">${a.seguradora}</td>
+      <td class="mono">${fmt(a.premio)}</td>
+      <td class="mono">${fmtPct(a.comissaoPct)}</td>
+      <td>${parc ? parc.nome : '<span class="muted">—</span>'}</td>
+      <td class="mono muted">${fmtData(a.inicio)}</td>
+      <td><span class="badge ${a.status === 'ativo' ? 'badge-ativo' : 'badge-inativo'}">${a.status === 'ativo' ? 'Ativa' : 'Inativa'}</span></td>
+      <td><div class="row-actions">
+        <button class="act-btn" onclick="editarApolice('${a.id}')">Editar</button>
+        <button class="act-btn" onclick="goToPagamentoApolice('${a.id}')">+ Pagamento</button>
+        <button class="act-btn danger" onclick="deletarApolice('${a.id}')">✕</button>
+      </div></td>
+    </tr>`;
+  }).join('');
+}
+
+function filtrarApolices(v) { renderApolices(v); }
+
+function abrirModalApolice() {
+  editandoId = null;
+  document.getElementById('modalApoliceTitle').textContent = 'Nova apólice';
+  ['fCliente','fProduto','fSeguradora','fPremio','fComissaoPct','fParcelas','fInicio','fRenovacao','fObs','fParceiro','fRepassePct'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.value = id === 'fImpostoPct' ? '16' : '';
+  });
+  document.getElementById('fImpostoPct').value = '16';
+  document.getElementById('modalApolice').classList.add('open');
+}
+
+function editarApolice(id) {
+  const a = getApolice(id);
+  if (!a) return;
+  editandoId = id;
+  document.getElementById('modalApoliceTitle').textContent = 'Editar apólice';
+  document.getElementById('fCliente').value = a.cliente || '';
+  document.getElementById('fProduto').value = a.produto || '';
+  document.getElementById('fTipo').value = a.tipo || 'seguro';
+  document.getElementById('fSeguradora').value = a.seguradora || '';
+  document.getElementById('fPremio').value = a.premio || '';
+  document.getElementById('fComissaoPct').value = a.comissaoPct || '';
+  document.getElementById('fImpostoPct').value = a.impostoPct || 16;
+  document.getElementById('fParcelas').value = a.parcelas || '';
+  document.getElementById('fInicio').value = a.inicio || '';
+  document.getElementById('fRenovacao').value = a.renovacao || '';
+  document.getElementById('fParceiro').value = a.parceiroId || '';
+  document.getElementById('fRepassePct').value = a.repassePct || '';
+  document.getElementById('fObs').value = a.obs || '';
+  document.getElementById('modalApolice').classList.add('open');
+}
+
+async function salvarApolice() {
+  const item = {
+    cliente: document.getElementById('fCliente').value.trim(),
+    produto: document.getElementById('fProduto').value,
+    tipo: document.getElementById('fTipo').value,
+    seguradora: document.getElementById('fSeguradora').value.trim(),
+    premio: parseFloat(document.getElementById('fPremio').value) || 0,
+    comissaoPct: parseFloat(document.getElementById('fComissaoPct').value) || 0,
+    impostoPct: parseFloat(document.getElementById('fImpostoPct').value) || 16,
+    parcelas: parseInt(document.getElementById('fParcelas').value) || 0,
+    inicio: document.getElementById('fInicio').value,
+    renovacao: document.getElementById('fRenovacao').value,
+    parceiroId: document.getElementById('fParceiro').value || null,
+    repassePct: parseFloat(document.getElementById('fRepassePct').value) || null,
+    obs: document.getElementById('fObs').value.trim(),
+    status: 'ativo'
+  };
+  if (!item.cliente || !item.produto) { alert('Preencha cliente e produto.'); return; }
+  if (editandoId) {
+    const idx = db.apolices.findIndex(a => a.id === editandoId);
+    if (idx >= 0) { item.id = editandoId; db.apolices[idx] = item; }
+  } else {
+    item.id = uid(); item.criadoEm = new Date().toISOString();
+    db.apolices.push(item);
+  }
+  fecharModal('modalApolice');
+  await salvarDrive(); renderTudo();
+}
+
+async function deletarApolice(id) {
+  if (!confirm('Remover esta apólice? Os pagamentos vinculados serão mantidos.')) return;
+  db.apolices = db.apolices.filter(a => a.id !== id);
+  await salvarDrive(); renderTudo();
+}
+
+// ─── PAGAMENTOS ───────────────────────────────────────────────────────────
+function renderPagamentos() {
+  const lista = [...db.pagamentos].sort((a, b) => new Date(b.data) - new Date(a.data));
+  const tbody = document.getElementById('tabelaPagamentos');
+  if (!lista.length) {
+    tbody.innerHTML = '<tr><td colspan="10"><div class="empty-table"><div class="empty-icon">💰</div>Nenhum pagamento registrado.</div></td></tr>';
+    return;
+  }
+  tbody.innerHTML = lista.map(p => {
+    const ap = getApolice(p.apoliceId);
+    const parc = getParceiro(p.parceiroId);
+    return `<tr>
+      <td class="mono">${fmtData(p.data)}</td>
+      <td><b>${ap?.cliente || '—'}</b><br><span class="muted" style="font-size:11px">${ap?.produto || ''}</span></td>
+      <td class="mono">${p.parcela}ª</td>
+      <td class="gold">${fmt(p.bruta)}</td>
+      <td class="mono muted">${fmtPct(p.imposto)}</td>
+      <td class="mono">${fmt(p.liquida)}</td>
+      <td class="muted">${parc?.nome || '—'}</td>
+      <td class="green">${fmt(p.repasseVal)}</td>
+      <td><span class="badge ${p.statusRepasse === 'pago' ? 'badge-ativo' : 'badge-inativo'}">${p.statusRepasse === 'pago' ? 'Pago' : 'Pendente'}</span></td>
+      <td><div class="row-actions">
+        <button class="act-btn" onclick="toggleRepasse('${p.id}')">${p.statusRepasse === 'pago' ? 'Desfazer' : 'Marcar pago'}</button>
+        <button class="act-btn danger" onclick="deletarPagamento('${p.id}')">✕</button>
+      </div></td>
+    </tr>`;
+  }).join('');
+}
+
+function abrirModalPagamento(apoliceId = null) {
+  document.getElementById('pgData').value = new Date().toISOString().split('T')[0];
+  document.getElementById('pgBruta').value = '';
+  document.getElementById('pgLiquida').value = '';
+  document.getElementById('pgRepasseVal').value = '';
+  document.getElementById('pgParceiro').value = '';
+  document.getElementById('pgParcela').value = '';
+  document.getElementById('pgStatus').value = 'pendente';
+  if (apoliceId) {
+    document.getElementById('pgApolice').value = apoliceId;
+    preencherDadosPagamento();
+  }
+  document.getElementById('modalPagamento').classList.add('open');
+}
+
+function goToPagamentoApolice(id) {
+  goTo('pagamentos');
+  setTimeout(() => abrirModalPagamento(id), 100);
+}
+
+function preencherDadosPagamento() {
+  const id = document.getElementById('pgApolice').value;
+  const ap = getApolice(id);
+  if (!ap) return;
+  document.getElementById('pgImposto').value = ap.impostoPct || 16;
+  document.getElementById('pgRepassePct').value = ap.repassePct || 50;
+  const parc = getParceiro(ap.parceiroId);
+  document.getElementById('pgParceiro').value = parc?.nome || '—';
+  calcularPagamento();
+}
+
+function calcularPagamento() {
+  const bruta = parseFloat(document.getElementById('pgBruta').value) || 0;
+  const impPct = parseFloat(document.getElementById('pgImposto').value) || 16;
+  const repPct = parseFloat(document.getElementById('pgRepassePct').value) || 50;
+  const liquida = bruta * (1 - impPct / 100);
+  const repasse = liquida * (repPct / 100);
+  document.getElementById('pgLiquida').value = liquida.toFixed(2);
+  document.getElementById('pgRepasseVal').value = repasse.toFixed(2);
+}
+
+async function salvarPagamento() {
+  const apoliceId = document.getElementById('pgApolice').value;
+  const ap = getApolice(apoliceId);
+  if (!apoliceId || !ap) { alert('Selecione a apólice.'); return; }
+  const bruta = parseFloat(document.getElementById('pgBruta').value);
+  if (!bruta) { alert('Informe o valor da comissão bruta.'); return; }
+  const item = {
+    id: uid(), apoliceId,
+    parceiroId: ap.parceiroId || null,
+    data: document.getElementById('pgData').value,
+    parcela: parseInt(document.getElementById('pgParcela').value) || 1,
+    bruta, imposto: parseFloat(document.getElementById('pgImposto').value) || 16,
+    liquida: parseFloat(document.getElementById('pgLiquida').value),
+    repassePct: parseFloat(document.getElementById('pgRepassePct').value) || 50,
+    repasseVal: parseFloat(document.getElementById('pgRepasseVal').value),
+    statusRepasse: document.getElementById('pgStatus').value,
+    criadoEm: new Date().toISOString()
+  };
+  db.pagamentos.push(item);
+  fecharModal('modalPagamento');
+  await salvarDrive(); renderTudo();
+}
+
+async function toggleRepasse(id) {
+  const p = db.pagamentos.find(p => p.id === id);
+  if (p) { p.statusRepasse = p.statusRepasse === 'pago' ? 'pendente' : 'pago'; await salvarDrive(); renderTudo(); }
+}
+
+async function deletarPagamento(id) {
+  if (!confirm('Remover este pagamento?')) return;
+  db.pagamentos = db.pagamentos.filter(p => p.id !== id);
+  await salvarDrive(); renderTudo();
+}
+
+// ─── PARCEIROS ───────────────────────────────────────────────────────────
+function renderParceiros() {
+  const tbody = document.getElementById('tabelaParceiros');
+  if (!db.parceiros.length) {
+    tbody.innerHTML = '<tr><td colspan="6"><div class="empty-table"><div class="empty-icon">🤝</div>Nenhum parceiro cadastrado.</div></td></tr>';
+    return;
+  }
+  tbody.innerHTML = db.parceiros.map(p => {
+    const apolices = db.apolices.filter(a => a.parceiroId === p.id).length;
+    const totalRepasse = db.pagamentos.filter(pg => pg.parceiroId === p.id).reduce((s, pg) => s + (parseFloat(pg.repasseVal) || 0), 0);
+    const pendente = db.pagamentos.filter(pg => pg.parceiroId === p.id && pg.statusRepasse === 'pendente').reduce((s, pg) => s + (parseFloat(pg.repasseVal) || 0), 0);
+    return `<tr>
+      <td><b>${p.nome}</b>${p.contato ? `<br><span class="muted" style="font-size:11px">${p.contato}</span>` : ''}</td>
+      <td class="mono">${p.repasse}%</td>
+      <td class="mono">${apolices}</td>
+      <td class="mono">${fmt(totalRepasse)}</td>
+      <td class="green">${fmt(pendente)}</td>
+      <td><div class="row-actions">
+        <button class="act-btn" onclick="verExtratoParc('${p.id}')">Extrato</button>
+        <button class="act-btn danger" onclick="deletarParceiro('${p.id}')">✕</button>
+      </div></td>
+    </tr>`;
+  }).join('');
+}
+
+function abrirModalParceiro() {
+  document.getElementById('pNome').value = '';
+  document.getElementById('pRepasse').value = '50';
+  document.getElementById('pTipo').value = 'pf';
+  document.getElementById('pContato').value = '';
+  document.getElementById('modalParceiro').classList.add('open');
+}
+
+async function salvarParceiro() {
+  const nome = document.getElementById('pNome').value.trim();
+  if (!nome) { alert('Informe o nome do parceiro.'); return; }
+  db.parceiros.push({
+    id: uid(), nome,
+    repasse: parseFloat(document.getElementById('pRepasse').value) || 50,
+    tipo: document.getElementById('pTipo').value,
+    contato: document.getElementById('pContato').value.trim(),
+    criadoEm: new Date().toISOString()
+  });
+  fecharModal('modalParceiro');
+  await salvarDrive(); renderTudo();
+}
+
+async function deletarParceiro(id) {
+  if (!confirm('Remover este parceiro?')) return;
+  db.parceiros = db.parceiros.filter(p => p.id !== id);
+  await salvarDrive(); renderTudo();
+}
+
+function verExtratoParc(id) {
+  document.getElementById('extratoFiltroParc').value = id;
+  goTo('extrato'); renderExtrato();
+}
+
+// ─── EXTRATO ─────────────────────────────────────────────────────────────
+function renderExtrato() {
+  const parcId = document.getElementById('extratoFiltroParc').value;
+  const periodo = document.getElementById('extratoFiltroPeriodo').value;
+  const statusFiltro = document.getElementById('extratoFiltroStatus').value;
+  const cont = document.getElementById('extratoConteudo');
+
+  if (!parcId) {
+    cont.innerHTML = '<div class="empty-table"><div class="empty-icon">📄</div>Selecione um parceiro para gerar o extrato.</div>';
+    return;
+  }
+
+  const parc = getParceiro(parcId);
+  if (!parc) return;
+
+  const hoje = new Date();
+  let pags = db.pagamentos.filter(p => p.parceiroId === parcId);
+
+  if (periodo !== 'todos') {
+    pags = pags.filter(p => {
+      const d = new Date(p.data);
+      if (periodo === 'mes') return d.getMonth() === hoje.getMonth() && d.getFullYear() === hoje.getFullYear();
+      if (periodo === 'trim') {
+        const q = Math.floor(hoje.getMonth() / 3);
+        return Math.floor(d.getMonth() / 3) === q && d.getFullYear() === hoje.getFullYear();
+      }
+      if (periodo === 'ano') return d.getFullYear() === hoje.getFullYear();
+      return true;
+    });
+  }
+  if (statusFiltro !== 'todos') pags = pags.filter(p => p.statusRepasse === statusFiltro);
+
+  const totalBruta = pags.reduce((s, p) => s + (parseFloat(p.bruta) || 0), 0);
+  const totalLiquida = pags.reduce((s, p) => s + (parseFloat(p.liquida) || 0), 0);
+  const totalRepasse = pags.reduce((s, p) => s + (parseFloat(p.repasseVal) || 0), 0);
+  const totalPago = pags.filter(p => p.statusRepasse === 'pago').reduce((s, p) => s + (parseFloat(p.repasseVal) || 0), 0);
+  const totalPendente = pags.filter(p => p.statusRepasse === 'pendente').reduce((s, p) => s + (parseFloat(p.repasseVal) || 0), 0);
+
+  const periodolabel = { todos: 'Todo o período', mes: 'Este mês', trim: 'Este trimestre', ano: 'Este ano' }[periodo];
+
+  cont.innerHTML = `
+    <div class="extrato-card" id="extratoDoc">
+      <div class="extrato-top">
+        <div>
+          <div class="extrato-parceiro">${parc.nome}</div>
+          <div class="extrato-periodo">${periodolabel} · Gerado em ${hoje.toLocaleDateString('pt-BR')}</div>
+        </div>
+        <div class="extrato-total-box">
+          <div class="extrato-total-label">Total a repassar</div>
+          <div class="extrato-total-val">${fmt(totalPendente)}</div>
+        </div>
+      </div>
+
+      <div style="padding:20px 24px; border-bottom:1px solid var(--border-dim);">
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px">
+          <div class="stat-card"><div class="stat-label">Comissão bruta</div><div class="stat-value" style="font-size:16px">${fmt(totalBruta)}</div></div>
+          <div class="stat-card"><div class="stat-label">Comissão líquida</div><div class="stat-value" style="font-size:16px">${fmt(totalLiquida)}</div></div>
+          <div class="stat-card"><div class="stat-label">Repasse total</div><div class="stat-value gold" style="font-size:16px">${fmt(totalRepasse)}</div></div>
+          <div class="stat-card"><div class="stat-label">Já pago</div><div class="stat-value green" style="font-size:16px">${fmt(totalPago)}</div></div>
+        </div>
+      </div>
+
+      ${pags.length ? `
+      <div style="overflow-x:auto">
+        <table>
+          <thead><tr>
+            <th>Data</th><th>Cliente</th><th>Produto</th><th>Seguradora</th>
+            <th>Parcela</th><th>Com. bruta</th><th>Líquida</th><th>% Rep.</th><th>Repasse</th><th>Status</th>
+          </tr></thead>
+          <tbody>
+            ${pags.sort((a,b)=>new Date(a.data)-new Date(b.data)).map(p => {
+              const ap = getApolice(p.apoliceId);
+              return `<tr>
+                <td class="mono">${fmtData(p.data)}</td>
+                <td><b>${ap?.cliente || '—'}</b></td>
+                <td class="muted">${ap?.produto || '—'}</td>
+                <td class="muted">${ap?.seguradora || '—'}</td>
+                <td class="mono">${p.parcela}ª</td>
+                <td class="gold">${fmt(p.bruta)}</td>
+                <td class="mono">${fmt(p.liquida)}</td>
+                <td class="mono">${fmtPct(p.repassePct)}</td>
+                <td class="green">${fmt(p.repasseVal)}</td>
+                <td><span class="badge ${p.statusRepasse === 'pago' ? 'badge-ativo' : 'badge-inativo'}">${p.statusRepasse === 'pago' ? 'Pago' : 'Pendente'}</span></td>
+              </tr>`;
+            }).join('')}
+          </tbody>
+        </table>
+      </div>` : '<div class="empty-table"><div class="empty-icon">📭</div>Nenhum pagamento encontrado para este filtro.</div>'}
+    </div>`;
+}
+
+function exportarExtrato() {
+  window.print();
+}
+
+// ─── SELECTS ─────────────────────────────────────────────────────────────
+function popularSelects() {
+  // Parceiro no modal de apólice
+  const selParc = document.getElementById('fParceiro');
+  const currentParc = selParc.value;
+  selParc.innerHTML = '<option value="">Nenhum</option>' + db.parceiros.map(p => `<option value="${p.id}">${p.nome} (${p.repasse}%)</option>`).join('');
+  selParc.value = currentParc;
+
+  // Apólice no modal de pagamento
+  const selAp = document.getElementById('pgApolice');
+  const currentAp = selAp.value;
+  selAp.innerHTML = '<option value="">Selecione a apólice</option>' + db.apolices.filter(a=>a.status==='ativo').map(a => `<option value="${a.id}">${a.cliente} — ${a.produto}</option>`).join('');
+  selAp.value = currentAp;
+
+  // Parceiro no extrato
+  const selExtParc = document.getElementById('extratoFiltroParc');
+  const currentExt = selExtParc.value;
+  selExtParc.innerHTML = '<option value="">Selecione o parceiro</option>' + db.parceiros.map(p => `<option value="${p.id}">${p.nome}</option>`).join('');
+  selExtParc.value = currentExt;
+}
+
+// ─── NAVEGAÇÃO ────────────────────────────────────────────────────────────
+function goTo(page) {
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelector(`[onclick="goTo('${page}')"]`).classList.add('active');
+  document.getElementById('page-' + page).classList.add('active');
+  if (page === 'extrato') renderExtrato();
+}
+
+// ─── MODAL ────────────────────────────────────────────────────────────────
+function fecharModal(id) { document.getElementById(id).classList.remove('open'); }
+document.querySelectorAll('.modal-overlay').forEach(m => {
+  m.addEventListener('click', e => { if (e.target === m) m.classList.remove('open'); });
+});
+</script>
+
+<style>
+@media print {
+  .sidebar, .page-header, .extrato-header, .nav-item, button, .act-btn { display: none !important; }
+  body { background: white; color: #000; }
+  .extrato-card { border: 1px solid #ccc; }
+  .stat-card { border: 1px solid #ccc; background: #f9f9f9; }
+  .stat-label, .extrato-periodo, .extrato-total-label { color: #666; }
+  .stat-value, .extrato-parceiro, .extrato-total-val { color: #000; }
+  .stat-value.gold, td.gold, .extrato-total-val { color: #8a6a00; }
+  .stat-value.green, td.green { color: #2a7a4a; }
+  thead th { color: #666; border-bottom: 1px solid #ccc; }
+  tbody tr { border-bottom: 1px solid #eee; }
+  .badge-ativo { background: #e6f4ea; color: #2a7a4a; }
+  .badge-inativo { background: #fce8e6; color: #a00; }
+}
+</style>
+</body>
+</html>
